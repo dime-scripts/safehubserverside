@@ -11,7 +11,7 @@ import os
 intents = discord.Intents.default()
 intents.message_content = True
 intents.members = True
-bot = commands.Bot(command_prefix='!', intents=intents)
+bot = commands.Bot(command_prefix='!', intents=intents, help_command=None)
 
 KEYS_FILE = 'keys.json'
 VERIFIED_FILE = 'verified.json'
@@ -390,3 +390,4 @@ async def revoke_user_keys(ctx, member: discord.Member = None):
         await ctx.send(f"{member.mention} has no active keys.")
 
 bot.run('MTUyMDM5MDA2MTM0NTA4MzUxMw.GKLHU-.xaR_oWjJo55bk_xshDt0VaW1-hyMh-fzLqjxDo')
+
