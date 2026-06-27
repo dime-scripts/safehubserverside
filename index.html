@@ -16,6 +16,143 @@
             background: #0b0e14;
             min-height: 100vh;
             display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-container {
+            background: #141a22;
+            padding: 40px;
+            border-radius: 12px;
+            border: 1px solid #212a34;
+            max-width: 420px;
+            width: 90%;
+        }
+
+        .login-container h2 {
+            color: #e8edf5;
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .login-container .subtitle {
+            color: #7a879a;
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .login-container .badge {
+            display: inline-block;
+            background: rgba(255, 70, 90, 0.12);
+            color: #ff465a;
+            font-size: 10px;
+            font-weight: 600;
+            padding: 2px 12px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 70, 90, 0.15);
+            margin-top: 4px;
+        }
+
+        .login-container .form-group {
+            margin-top: 20px;
+            margin-bottom: 16px;
+        }
+
+        .login-container label {
+            display: block;
+            color: #a0b0c8;
+            font-size: 12px;
+            font-weight: 500;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .login-container input {
+            width: 100%;
+            padding: 12px 16px;
+            background: #1a222e;
+            border: 1px solid #2a3340;
+            border-radius: 8px;
+            color: #e8edf5;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .login-container input:focus {
+            outline: none;
+            border-color: #2d6bff;
+            background: #1e2632;
+        }
+
+        .login-container .btn {
+            width: 100%;
+            padding: 12px;
+            background: #2d6bff;
+            border: none;
+            border-radius: 8px;
+            color: #ffffff;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            letter-spacing: 0.3px;
+        }
+
+        .login-container .btn:hover {
+            background: #3b78ff;
+            transform: translateY(-1px);
+        }
+
+        .login-container .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .login-container .error {
+            color: #dc3545;
+            font-size: 13px;
+            margin-top: 10px;
+            display: none;
+        }
+
+        .login-container .error.show {
+            display: block;
+        }
+
+        .login-container .success {
+            color: #28a745;
+            font-size: 13px;
+            margin-top: 10px;
+            display: none;
+        }
+
+        .login-container .success.show {
+            display: block;
+        }
+
+        .login-container .footer {
+            margin-top: 24px;
+            text-align: center;
+            color: #3a4555;
+            font-size: 11px;
+            border-top: 1px solid #1a222e;
+            padding-top: 16px;
+        }
+
+        .login-container .footer .safe-hub {
+            color: #28a745;
+            font-weight: 600;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        #mainContent {
+            width: 100%;
         }
 
         .sidebar {
@@ -48,7 +185,7 @@
             margin-top: 4px;
         }
 
-        .sidebar-brand .badge {
+        .sidebar-brand .badge-side {
             display: inline-block;
             background: rgba(255, 70, 90, 0.12);
             color: #ff465a;
@@ -119,6 +256,10 @@
             color: #3a4555;
             font-size: 11px;
             text-align: center;
+        }
+
+        .sidebar-footer .status-online {
+            color: #28a745;
         }
 
         .main-content {
@@ -671,176 +812,304 @@
             .command-buttons {
                 grid-template-columns: 1fr;
             }
+            .login-container {
+                padding: 24px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .sidebar-brand h2 {
+                font-size: 18px;
+            }
+            .nav-item {
+                padding: 6px 10px;
+                font-size: 12px;
+                min-width: 60px;
+            }
+            .main-content {
+                padding: 12px;
+            }
+            .header-left h1 {
+                font-size: 20px;
+            }
+            .stats-badge {
+                gap: 12px;
+                padding: 6px 12px;
+            }
+            .stats-badge .stat {
+                font-size: 11px;
+            }
+            .server-card {
+                padding: 14px;
+            }
+            .game-name {
+                font-size: 16px;
+            }
+            .details-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 8px;
+            }
+            .detail-item .value {
+                font-size: 12px;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="sidebar">
-        <div class="sidebar-brand">
-            <h2>Safe Hub</h2>
-            <div class="sub">Infected Games Network</div>
-            <div class="badge">Command Center</div>
+    <div class="login-container" id="loginContainer">
+        <h2>Safe Hub</h2>
+        <div class="subtitle">Enter your access key to continue</div>
+        <div class="badge">Private Network</div>
+        
+        <div style="margin-top: 20px;">
+            <div class="form-group">
+                <label for="keyInput">Access Key</label>
+                <input type="password" id="keyInput" placeholder="Enter your key..." autocomplete="off">
+            </div>
+            
+            <button class="btn" id="loginBtn" onclick="validateKey()">Access Dashboard</button>
+            
+            <div class="error" id="errorMessage">Invalid key. Please try again.</div>
+            <div class="success" id="successMessage">Key validated successfully! Loading dashboard...</div>
         </div>
-
-        <div class="nav-items">
-            <div class="nav-item active" onclick="switchPage('servers')" id="nav-servers">
-                <span class="icon"></span>
-                <span>Servers</span>
-                <span class="count" id="navServerCount">0</span>
-            </div>
-            <div class="nav-item" onclick="switchPage('players')" id="nav-players">
-                <span class="icon"></span>
-                <span>Players</span>
-                <span class="count" id="navPlayerCount">0</span>
-            </div>
-            <div class="nav-item" onclick="switchPage('commands')" id="nav-commands">
-                <span class="icon"></span>
-                <span>Commands</span>
-            </div>
-        </div>
-
-        <div class="nav-divider"></div>
-
-        <div class="sidebar-footer">
-            <div>WebSocket Connection</div>
-            <div style="color:#28a745;margin-top:4px;" id="connectionStatus">● Connected</div>
+        
+        <div class="footer">
+            <span class="safe-hub">Safe Hub</span> &bull; Infected Games Network
         </div>
     </div>
 
-    <div class="main-content">
-        <div class="header">
-            <div class="header-left">
-                <h1 id="pageTitle">Servers</h1>
-                <p id="pageSubtitle">Monitor all infected game servers in the network</p>
-                <div class="last-update" id="lastUpdate">Last updated: —</div>
+    <div id="mainContent" class="hidden">
+        <div class="sidebar">
+            <div class="sidebar-brand">
+                <h2>Safe Hub</h2>
+                <div class="sub">Infected Games Network</div>
+                <div class="badge-side">Command Center</div>
             </div>
-            <div class="header-right">
-                <div class="stats-badge">
-                    <div class="stat">
-                        <span>Servers</span>
-                        <span class="number" id="serverCount">0</span>
+
+            <div class="nav-items">
+                <div class="nav-item active" onclick="switchPage('servers')" id="nav-servers">
+                    <span class="icon">🖥️</span>
+                    <span>Servers</span>
+                    <span class="count" id="navServerCount">0</span>
+                </div>
+                <div class="nav-item" onclick="switchPage('players')" id="nav-players">
+                    <span class="icon">👤</span>
+                    <span>Players</span>
+                    <span class="count" id="navPlayerCount">0</span>
+                </div>
+                <div class="nav-item" onclick="switchPage('commands')" id="nav-commands">
+                    <span class="icon">⚡</span>
+                    <span>Commands</span>
+                </div>
+            </div>
+
+            <div class="nav-divider"></div>
+
+            <div class="sidebar-footer">
+                <div>WebSocket Connection</div>
+                <div style="margin-top:4px;" id="connectionStatus">● Connected</div>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="header">
+                <div class="header-left">
+                    <h1 id="pageTitle">Servers</h1>
+                    <p id="pageSubtitle">Monitor all infected game servers in the network</p>
+                    <div class="last-update" id="lastUpdate">Last updated: —</div>
+                </div>
+                <div class="header-right">
+                    <div class="stats-badge">
+                        <div class="stat">
+                            <span>Servers</span>
+                            <span class="number" id="serverCount">0</span>
+                        </div>
+                        <div class="stat">
+                            <span>Online</span>
+                            <span class="number" id="onlineCount">0</span>
+                        </div>
+                        <div class="stat">
+                            <span>Players</span>
+                            <span class="number" id="playerCount">0</span>
+                        </div>
                     </div>
-                    <div class="stat">
-                        <span>Online</span>
-                        <span class="number" id="onlineCount">0</span>
+                    <button class="btn btn-primary" onclick="refreshData()">⟳ Refresh</button>
+                </div>
+            </div>
+
+            <div class="page active" id="page-servers">
+                <div class="section-title">
+                    <span>Active Servers</span>
+                    <span class="count" id="serverCountLabel">0 servers</span>
+                </div>
+                <div class="grid" id="serverGrid">
+                    <div class="empty-state">
+                        <div class="icon">📡</div>
+                        <h3>No Active Servers</h3>
+                        <p>Waiting for Safe Hub servers to connect</p>
                     </div>
-                    <div class="stat">
-                        <span>Players</span>
-                        <span class="number" id="playerCount">0</span>
+                </div>
+            </div>
+
+            <div class="page" id="page-players">
+                <div class="section-title">
+                    <span>Players Online</span>
+                    <span class="count" id="playerCountLabel">0 players</span>
+                </div>
+                <div class="grid" id="playerGrid">
+                    <div class="empty-state">
+                        <div class="icon">👤</div>
+                        <h3>No Players Online</h3>
+                        <p>Players will appear here when they join a server</p>
                     </div>
                 </div>
-                <button class="btn btn-primary" onclick="refreshData()">⟳ Refresh</button>
             </div>
-        </div>
 
-        <!-- Servers Page -->
-        <div class="page active" id="page-servers">
-            <div class="section-title">
-                <span>Active Servers</span>
-                <span class="count" id="serverCountLabel">0 servers</span>
-            </div>
-            <div class="grid" id="serverGrid">
-                <div class="empty-state">
-                    <div class="icon">📡</div>
-                    <h3>No Active Servers</h3>
-                    <p>Waiting for Safe Hub servers to connect</p>
-                </div>
-            </div>
-        </div>
+            <div class="page" id="page-commands">
+                <div class="commands-panel">
+                    <div class="panel-title">Command Center</div>
+                    <div class="panel-subtitle">Execute commands on selected server and player</div>
 
-        <!-- Players Page -->
-        <div class="page" id="page-players">
-            <div class="section-title">
-                <span>Players Online</span>
-                <span class="count" id="playerCountLabel">0 players</span>
-            </div>
-            <div class="grid" id="playerGrid">
-                <div class="empty-state">
-                    <div class="icon">👤</div>
-                    <h3>No Players Online</h3>
-                    <p>Players will appear here when they join a server</p>
-                </div>
-            </div>
-        </div>
+                    <div class="form-group">
+                        <label for="serverSelect">Target Server</label>
+                        <select id="serverSelect">
+                            <option value="">Select a server...</option>
+                        </select>
+                    </div>
 
-        <!-- Commands Page -->
-        <div class="page" id="page-commands">
-            <div class="commands-panel">
-                <div class="panel-title">Command Center</div>
-                <div class="panel-subtitle">Execute commands on selected server and player</div>
+                    <div class="form-group">
+                        <label for="playerSelect">Target Player</label>
+                        <select id="playerSelect">
+                            <option value="">Select a player...</option>
+                        </select>
+                    </div>
 
-                <div class="form-group">
-                    <label for="serverSelect">Target Server</label>
-                    <select id="serverSelect">
-                        <option value="">Select a server...</option>
-                    </select>
-                </div>
+                    <div class="form-group">
+                        <label for="commandInput">Command</label>
+                        <select id="commandInput">
+                            <option value="kick">Kick</option>
+                            <option value="ban">Ban</option>
+                            <option value="tempban">Temporary Ban</option>
+                            <option value="message">Send Message</option>
+                            <option value="warn">Warn</option>
+                            <option value="mute">Mute</option>
+                            <option value="unmute">Unmute</option>
+                            <option value="freeze">Freeze</option>
+                            <option value="unfreeze">Unfreeze</option>
+                            <option value="teleport">Teleport</option>
+                            <option value="respawn">Respawn</option>
+                            <option value="heal">Heal</option>
+                            <option value="kill">Kill</option>
+                            <option value="clearinventory">Clear Inventory</option>
+                            <option value="setrank">Set Rank</option>
+                            <option value="giveroles">Give Roles</option>
+                            <option value="removeroles">Remove Roles</option>
+                        </select>
+                    </div>
 
-                <div class="form-group">
-                    <label for="playerSelect">Target Player</label>
-                    <select id="playerSelect">
-                        <option value="">Select a player...</option>
-                    </select>
-                </div>
+                    <div class="form-group" id="extraInputGroup">
+                        <label for="extraInput">Additional Parameters</label>
+                        <input type="text" id="extraInput" placeholder="Duration, message, rank, etc.">
+                    </div>
 
-                <div class="form-group">
-                    <label for="commandInput">Command</label>
-                    <select id="commandInput">
-                        <option value="kick">Kick</option>
-                        <option value="ban">Ban</option>
-                        <option value="tempban">Temporary Ban</option>
-                        <option value="message">Send Message</option>
-                        <option value="warn">Warn</option>
-                        <option value="mute">Mute</option>
-                        <option value="unmute">Unmute</option>
-                        <option value="freeze">Freeze</option>
-                        <option value="unfreeze">Unfreeze</option>
-                        <option value="teleport">Teleport</option>
-                        <option value="respawn">Respawn</option>
-                        <option value="heal">Heal</option>
-                        <option value="kill">Kill</option>
-                        <option value="clearinventory">Clear Inventory</option>
-                        <option value="setrank">Set Rank</option>
-                        <option value="giveroles">Give Roles</option>
-                        <option value="removeroles">Remove Roles</option>
-                    </select>
-                </div>
+                    <div class="form-group">
+                        <label for="reasonInput">Reason</label>
+                        <input type="text" id="reasonInput" placeholder="Reason for action...">
+                    </div>
 
-                <div class="form-group" id="extraInputGroup">
-                    <label for="extraInput">Additional Parameters</label>
-                    <input type="text" id="extraInput" placeholder="Duration, message, rank, etc.">
-                </div>
-
-                <div class="form-group">
-                    <label for="reasonInput">Reason</label>
-                    <input type="text" id="reasonInput" placeholder="Reason for action...">
-                </div>
-
-                <div class="command-buttons">
-                    <button class="btn btn-danger btn-full" onclick="executeCommand()">
-                        Execute Command
-                    </button>
-                    <button class="btn btn-warning" onclick="clearSelection()">
-                        Clear Selection
-                    </button>
-                    <button class="btn btn-success" onclick="refreshPlayers()">
-                        Refresh Players
-                    </button>
+                    <div class="command-buttons">
+                        <button class="btn btn-danger btn-full" onclick="executeCommand()">
+                            Execute Command
+                        </button>
+                        <button class="btn btn-warning" onclick="clearSelection()">
+                            Clear Selection
+                        </button>
+                        <button class="btn btn-success" onclick="refreshPlayers()">
+                            Refresh Players
+                        </button>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <div class="footer">
-            <p><span class="safe-hub">Safe Hub</span> &bull; Infected Games Command Center &bull; Real-time updates via WebSocket</p>
+            <div class="footer">
+                <p><span class="safe-hub">Safe Hub</span> &bull; Infected Games Command Center &bull; Real-time updates via WebSocket</p>
+            </div>
         </div>
     </div>
 
     <script>
+        let validated = false;
         let socket = null;
         let serverData = { servers: [] };
         let selectedServerId = null;
         let selectedPlayer = null;
         let currentPage = 'servers';
+
+        async function validateKey() {
+            const keyInput = document.getElementById('keyInput');
+            const loginBtn = document.getElementById('loginBtn');
+            const errorMsg = document.getElementById('errorMessage');
+            const successMsg = document.getElementById('successMessage');
+            const key = keyInput.value.trim();
+
+            errorMsg.classList.remove('show');
+            successMsg.classList.remove('show');
+
+            if (!key) {
+                errorMsg.textContent = 'Please enter your access key.';
+                errorMsg.classList.add('show');
+                return;
+            }
+
+            loginBtn.disabled = true;
+            loginBtn.textContent = 'Validating...';
+
+            try {
+                const response = await fetch('/api/validate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ key: key })
+                });
+
+                const data = await response.json();
+
+                if (data.valid) {
+                    successMsg.textContent = 'Key validated successfully! Loading dashboard...';
+                    successMsg.classList.add('show');
+                    validated = true;
+                    
+                    localStorage.setItem('safehub_key', key);
+                    localStorage.setItem('safehub_validated', 'true');
+                    
+                    setTimeout(() => {
+                        document.getElementById('loginContainer').style.display = 'none';
+                        document.getElementById('mainContent').classList.remove('hidden');
+                        document.body.style.display = 'flex';
+                        document.body.style.alignItems = 'flex-start';
+                        document.body.style.justifyContent = 'center';
+                        initializeDashboard();
+                    }, 1000);
+                } else {
+                    errorMsg.textContent = data.reason || 'Invalid key. Please try again.';
+                    errorMsg.classList.add('show');
+                    loginBtn.disabled = false;
+                    loginBtn.textContent = 'Access Dashboard';
+                }
+            } catch (error) {
+                errorMsg.textContent = 'Network error. Please try again.';
+                errorMsg.classList.add('show');
+                loginBtn.disabled = false;
+                loginBtn.textContent = 'Access Dashboard';
+            }
+        }
+
+        document.getElementById('keyInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                validateKey();
+            }
+        });
 
         function switchPage(page) {
             currentPage = page;
@@ -1234,20 +1503,32 @@
             }
         }
 
-        document.getElementById('serverSelect').addEventListener('change', function() {
-            if (this.value) {
-                selectedServerId = this.value;
-                updatePlayerSelect(this.value);
-            } else {
-                clearSelection();
+        function initializeDashboard() {
+            document.getElementById('serverSelect').addEventListener('change', function() {
+                if (this.value) {
+                    selectedServerId = this.value;
+                    updatePlayerSelect(this.value);
+                } else {
+                    clearSelection();
+                }
+            });
+
+            document.getElementById('playerSelect').addEventListener('change', function() {
+                selectedPlayer = this.value;
+            });
+
+            connectWebSocket();
+        }
+
+        window.onload = function() {
+            const savedKey = localStorage.getItem('safehub_key');
+            const savedValidated = localStorage.getItem('safehub_validated');
+            
+            if (savedKey && savedValidated === 'true') {
+                document.getElementById('keyInput').value = savedKey;
+                validateKey();
             }
-        });
-
-        document.getElementById('playerSelect').addEventListener('change', function() {
-            selectedPlayer = this.value;
-        });
-
-        connectWebSocket();
+        };
     </script>
 </body>
 </html>
