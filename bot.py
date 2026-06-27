@@ -284,32 +284,41 @@ async def help_command(ctx):
         value="Show this help message",
         inline=False
     )
+    embed.add_field(
+        name="!mykey",
+        value="Show your active keys",
+        inline=False
+    )
     
     embed.set_footer(text=f"Cooldown: {COOLDOWN_HOURS} hours per key generation")
     await ctx.send(embed=embed)
 
 @bot.command(name='mykey')
 async def my_key(ctx):
-    keys = load_keys()
-    user_id = str(ctx.author.id)
-    
-    user_keys = []
-    for key, data in keys.items():
-        if data.get('user_id') == user_id and data['active']:
-            expiry = datetime.datetime.fromisoformat(data['expires_at'])
-            if expiry > datetime.datetime.now():
-                user_keys.append(key)
-    
-    if not user_keys:
-        await ctx.send("You don't have any active keys. Use `!generatekey` to create one.")
-        return
-    
     try:
-        for key in user_keys:
-            await ctx.author.send(f"Your active key: `{key}`")
-        await ctx.send("Your active keys have been sent to your DMs.")
-    except discord.Forbidden:
-        await ctx.send(f"Could not send keys via DM. Please enable DMs. Your keys: {', '.join([f'`{k}`' for k in user_keys])}")
+        keys = load_keys()
+        user_id = str(ctx.author.id)
+        
+        user_keys = []
+        for key, data in keys.items():
+            if data.get('user_id') == user_id and data['active']:
+                expiry = datetime.datetime.fromisoformat(data['expires_at'])
+                if expiry > datetime.datetime.now():
+                    user_keys.append(key)
+        
+        if not user_keys:
+            await ctx.send("You don't have any active keys. Use `!generatekey` to create one.")
+            return
+        
+        try:
+            for key in user_keys:
+                await ctx.author.send(f"Your active key: `{key}`")
+            await ctx.send("Your active keys have been sent to your DMs.")
+        except discord.Forbidden:
+            await ctx.send(f"Could not send keys via DM. Please enable DMs. Your keys: {', '.join([f'`{k}`' for k in user_keys])}")
+    except Exception as e:
+        await ctx.send(f"An error occurred: {str(e)}")
+        print(f"Error in mykey: {e}")
 
 @bot.command(name='listverified')
 @is_admin()
@@ -409,4 +418,7 @@ discord_token = os.getenv('DISCORD_TOKEN')
 if not discord_token:
     raise ValueError("DISCORD_TOKEN environment variable is not set. Please set it in Railway.")
 
-bot.run(discord_token)
+try:
+    bot.run(discord_token)
+except Exception as e:
+    print(f"Failed to start bot: {e}")
