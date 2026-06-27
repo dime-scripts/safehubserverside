@@ -389,5 +389,10 @@ async def revoke_user_keys(ctx, member: discord.Member = None):
     else:
         await ctx.send(f"{member.mention} has no active keys.")
 
-bot.run('MTUyMDM5MDA2MTM0NTA4MzUxMw.GKLHU-.xaR_oWjJo55bk_xshDt0VaW1-hyMh-fzLqjxDo')
+# Get Discord token from environment variable
+discord_token = os.getenv('DISCORD_TOKEN')
+if not discord_token:
+    raise ValueError("DISCORD_TOKEN environment variable is not set. Please set it in Railway.")
+
+bot.run(discord_token)
 
