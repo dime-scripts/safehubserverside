@@ -746,6 +746,35 @@
             font-weight: 400;
         }
 
+        .status-message {
+            padding: 10px 16px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            display: none;
+            font-size: 13px;
+        }
+
+        .status-message.error {
+            display: block;
+            background: rgba(220, 53, 69, 0.1);
+            color: #dc3545;
+            border: 1px solid rgba(220, 53, 69, 0.2);
+        }
+
+        .status-message.success {
+            display: block;
+            background: rgba(40, 167, 69, 0.1);
+            color: #28a745;
+            border: 1px solid rgba(40, 167, 69, 0.2);
+        }
+
+        .status-message.info {
+            display: block;
+            background: rgba(45, 107, 255, 0.1);
+            color: #2d6bff;
+            border: 1px solid rgba(45, 107, 255, 0.2);
+        }
+
         @media (max-width: 1024px) {
             .sidebar {
                 width: 200px;
@@ -862,6 +891,8 @@
         <div class="badge">Private Network</div>
         
         <div style="margin-top: 20px;">
+            <div id="statusMessage" class="status-message"></div>
+            
             <div class="form-group">
                 <label for="keyInput">Access Key</label>
                 <input type="password" id="keyInput" placeholder="Enter your key..." autocomplete="off">
@@ -869,12 +900,9 @@
             
             <button class="btn" id="loginBtn" onclick="validateKey()">Access Dashboard</button>
             
-            <div class="error" id="errorMessage">Invalid key. Please try again.</div>
-            <div class="success" id="successMessage">Key validated successfully! Loading dashboard...</div>
-        </div>
-        
-        <div class="footer">
-            <span class="safe-hub">Safe Hub</span> &bull; Infected Games Network
+            <div class="footer">
+                <span class="safe-hub">Safe Hub</span> &bull; Infected Games Network
+            </div>
         </div>
     </div>
 
@@ -1045,19 +1073,27 @@
         let selectedPlayer = null;
         let currentPage = 'servers';
 
+        function showStatus(message, type) {
+            const statusEl = document.getElementById('statusMessage');
+            statusEl.textContent = message;
+            statusEl.className = 'status-message ' + type;
+        }
+
+        function hideStatus() {
+            const statusEl = document.getElementById('statusMessage');
+            statusEl.className = 'status-message';
+            statusEl.textContent = '';
+        }
+
         async function validateKey() {
             const keyInput = document.getElementById('keyInput');
             const loginBtn = document.getElementById('loginBtn');
-            const errorMsg = document.getElementById('errorMessage');
-            const successMsg = document.getElementById('successMessage');
             const key = keyInput.value.trim();
 
-            errorMsg.classList.remove('show');
-            successMsg.classList.remove('show');
+            hideStatus();
 
             if (!key) {
-                errorMsg.textContent = 'Please enter your access key.';
-                errorMsg.classList.add('show');
+                showStatus('Please enter your access key.', 'error');
                 return;
             }
 
@@ -1073,11 +1109,14 @@
                     body: JSON.stringify({ key: key })
                 });
 
+                if (!response.ok) {
+                    throw new Error('Server responded with status: ' + response.status);
+                }
+
                 const data = await response.json();
 
                 if (data.valid) {
-                    successMsg.textContent = 'Key validated successfully! Loading dashboard...';
-                    successMsg.classList.add('show');
+                    showStatus('Key validated successfully! Loading dashboard...', 'success');
                     validated = true;
                     
                     localStorage.setItem('safehub_key', key);
@@ -1092,14 +1131,13 @@
                         initializeDashboard();
                     }, 1000);
                 } else {
-                    errorMsg.textContent = data.reason || 'Invalid key. Please try again.';
-                    errorMsg.classList.add('show');
+                    showStatus(data.reason || 'Invalid key. Please try again.', 'error');
                     loginBtn.disabled = false;
                     loginBtn.textContent = 'Access Dashboard';
                 }
             } catch (error) {
-                errorMsg.textContent = 'Network error. Please try again.';
-                errorMsg.classList.add('show');
+                console.error('Validation error:', error);
+                showStatus('Network error: ' + error.message + '. Make sure the backend server is running on port 8080.', 'error');
                 loginBtn.disabled = false;
                 loginBtn.textContent = 'Access Dashboard';
             }
