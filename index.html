@@ -1,0 +1,1253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Safe Hub - Infected Games Monitor</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+        }
+
+        body {
+            background: #0b0e14;
+            min-height: 100vh;
+            display: flex;
+        }
+
+        .sidebar {
+            width: 240px;
+            background: #0f131a;
+            border-right: 1px solid #1a222e;
+            padding: 24px 16px;
+            height: 100vh;
+            position: sticky;
+            top: 0;
+            overflow-y: auto;
+            flex-shrink: 0;
+        }
+
+        .sidebar-brand {
+            padding: 8px 12px;
+            margin-bottom: 32px;
+        }
+
+        .sidebar-brand h2 {
+            color: #e8edf5;
+            font-size: 20px;
+            font-weight: 600;
+            letter-spacing: -0.3px;
+        }
+
+        .sidebar-brand .sub {
+            color: #5a6a7a;
+            font-size: 12px;
+            margin-top: 4px;
+        }
+
+        .sidebar-brand .badge {
+            display: inline-block;
+            background: rgba(255, 70, 90, 0.12);
+            color: #ff465a;
+            font-size: 10px;
+            font-weight: 600;
+            padding: 2px 12px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 70, 90, 0.15);
+            margin-top: 6px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 14px;
+            border-radius: 8px;
+            color: #7a879a;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 2px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .nav-item:hover {
+            background: #1a222e;
+            color: #e8edf5;
+        }
+
+        .nav-item.active {
+            background: #1a222e;
+            color: #e8edf5;
+            border-left: 3px solid #2d6bff;
+        }
+
+        .nav-item .icon {
+            width: 20px;
+            text-align: center;
+            font-size: 16px;
+        }
+
+        .nav-item .count {
+            margin-left: auto;
+            background: #1a222e;
+            padding: 1px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            color: #5a6a7a;
+        }
+
+        .nav-item.active .count {
+            background: #2d6bff;
+            color: #ffffff;
+        }
+
+        .nav-divider {
+            height: 1px;
+            background: #1a222e;
+            margin: 12px 12px;
+        }
+
+        .sidebar-footer {
+            margin-top: 24px;
+            padding: 12px;
+            border-top: 1px solid #1a222e;
+            color: #3a4555;
+            font-size: 11px;
+            text-align: center;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 24px 32px;
+            overflow-y: auto;
+            min-width: 0;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-bottom: 28px;
+        }
+
+        .header-left h1 {
+            color: #e8edf5;
+            font-size: 24px;
+            font-weight: 600;
+            letter-spacing: -0.3px;
+        }
+
+        .header-left p {
+            color: #7a879a;
+            font-size: 14px;
+            margin-top: 4px;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .stats-badge {
+            background: #141a22;
+            padding: 8px 20px;
+            border-radius: 8px;
+            border: 1px solid #212a34;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .stats-badge .stat {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #a0b0c8;
+            font-size: 13px;
+        }
+
+        .stats-badge .stat .number {
+            color: #e8edf5;
+            font-weight: 600;
+        }
+
+        .btn {
+            background: #2a3340;
+            color: #e8edf5;
+            border: 1px solid #3a4555;
+            padding: 8px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.2s;
+            letter-spacing: 0.2px;
+        }
+
+        .btn:hover {
+            background: #354052;
+            border-color: #4a5a6a;
+            transform: translateY(-1px);
+        }
+
+        .btn-primary {
+            background: #2d6bff;
+            border-color: #2d6bff;
+        }
+
+        .btn-primary:hover {
+            background: #3b78ff;
+            border-color: #3b78ff;
+        }
+
+        .btn-success {
+            background: #28a745;
+            border-color: #28a745;
+        }
+
+        .btn-success:hover {
+            background: #34b854;
+            border-color: #34b854;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            border-color: #dc3545;
+        }
+
+        .btn-danger:hover {
+            background: #e74c5e;
+            border-color: #e74c5e;
+        }
+
+        .btn-warning {
+            background: #ffc107;
+            border-color: #ffc107;
+            color: #0b0e14;
+        }
+
+        .btn-warning:hover {
+            background: #ffcd2e;
+            border-color: #ffcd2e;
+        }
+
+        .last-update {
+            color: #5a6a7a;
+            font-size: 12px;
+            margin-top: 6px;
+        }
+
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 16px;
+        }
+
+        .server-card {
+            background: #141a22;
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid #212a34;
+            transition: all 0.25s ease;
+        }
+
+        .server-card:hover {
+            border-color: #3a4a5a;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+        }
+
+        .server-card.online {
+            border-left: 3px solid #28a745;
+        }
+
+        .server-card.offline {
+            border-left: 3px solid #dc3545;
+            opacity: 0.5;
+        }
+
+        .server-card.shutting-down {
+            border-left: 3px solid #ffc107;
+            opacity: 0.7;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 6px;
+        }
+
+        .game-name {
+            color: #e8edf5;
+            font-size: 18px;
+            font-weight: 600;
+            letter-spacing: -0.2px;
+        }
+
+        .game-name .infected-tag {
+            color: #ff465a;
+            font-size: 12px;
+            font-weight: 500;
+            margin-left: 8px;
+            background: rgba(255, 70, 90, 0.1);
+            padding: 2px 10px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 70, 90, 0.15);
+        }
+
+        .server-name {
+            color: #7a879a;
+            font-size: 13px;
+            font-weight: 400;
+            margin-bottom: 12px;
+        }
+
+        .status-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 4px 12px;
+            border-radius: 20px;
+        }
+
+        .status-indicator.online {
+            color: #28a745;
+            background: rgba(40, 167, 69, 0.08);
+            border: 1px solid rgba(40, 167, 69, 0.15);
+        }
+
+        .status-indicator.offline {
+            color: #dc3545;
+            background: rgba(220, 53, 69, 0.08);
+            border: 1px solid rgba(220, 53, 69, 0.15);
+        }
+
+        .status-indicator.shutting-down {
+            color: #ffc107;
+            background: rgba(255, 193, 7, 0.08);
+            border: 1px solid rgba(255, 193, 7, 0.15);
+        }
+
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .status-dot.online {
+            background: #28a745;
+            animation: pulse-dot 2s infinite;
+        }
+
+        .status-dot.offline {
+            background: #dc3545;
+        }
+
+        .status-dot.shutting-down {
+            background: #ffc107;
+            animation: pulse-dot 1s infinite;
+        }
+
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        .details-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin: 12px 0 0 0;
+            padding: 12px 0 0 0;
+            border-top: 1px solid #1e2632;
+        }
+
+        .detail-item {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .detail-item .label {
+            color: #5a6a7a;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+
+        .detail-item .value {
+            color: #e8edf5;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .detail-item .value .sub {
+            color: #7a879a;
+            font-weight: 400;
+            font-size: 12px;
+        }
+
+        .player-list {
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid #1e2632;
+        }
+
+        .player-list .title {
+            color: #5a6a7a;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .player-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .player-tag {
+            background: #1a222e;
+            color: #b0c0d8;
+            padding: 3px 12px;
+            border-radius: 16px;
+            font-size: 12px;
+            border: 1px solid #26303e;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .player-tag:hover {
+            background: #26303e;
+            border-color: #3a4a5a;
+        }
+
+        .player-tag.selected {
+            background: #2d6bff;
+            border-color: #2d6bff;
+            color: #ffffff;
+        }
+
+        .card-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid #1e2632;
+        }
+
+        .card-actions .btn {
+            flex: 1;
+            text-align: center;
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+
+        .commands-panel {
+            background: #141a22;
+            border-radius: 12px;
+            padding: 24px;
+            border: 1px solid #212a34;
+        }
+
+        .commands-panel .panel-title {
+            color: #e8edf5;
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .commands-panel .panel-subtitle {
+            color: #7a879a;
+            font-size: 13px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            color: #a0b0c8;
+            font-size: 12px;
+            font-weight: 500;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .form-group select,
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px 12px;
+            background: #1a222e;
+            border: 1px solid #2a3340;
+            border-radius: 8px;
+            color: #e8edf5;
+            font-size: 13px;
+            transition: all 0.2s;
+        }
+
+        .form-group select:focus,
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #2d6bff;
+            background: #1e2632;
+        }
+
+        .form-group select option {
+            background: #141a22;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 60px;
+            font-family: inherit;
+        }
+
+        .command-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-top: 16px;
+        }
+
+        .command-buttons .btn {
+            padding: 8px 12px;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .command-buttons .btn-full {
+            grid-column: 1 / -1;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #5a6a7a;
+        }
+
+        .empty-state .icon {
+            font-size: 36px;
+            margin-bottom: 12px;
+            opacity: 0.3;
+        }
+
+        .empty-state h3 {
+            color: #8a9aaa;
+            font-weight: 500;
+            font-size: 16px;
+        }
+
+        .empty-state p {
+            font-size: 13px;
+            margin-top: 4px;
+        }
+
+        .footer {
+            margin-top: 32px;
+            text-align: center;
+            color: #3a4555;
+            font-size: 12px;
+            border-top: 1px solid #1a222e;
+            padding-top: 20px;
+        }
+
+        .footer .safe-hub {
+            color: #28a745;
+            font-weight: 600;
+        }
+
+        .section-title {
+            color: #e8edf5;
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .section-title .count {
+            color: #7a879a;
+            font-size: 13px;
+            font-weight: 400;
+        }
+
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 200px;
+                padding: 16px 12px;
+            }
+            .main-content {
+                padding: 16px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                flex-direction: column;
+            }
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: static;
+                border-right: none;
+                border-bottom: 1px solid #1a222e;
+                padding: 12px 16px;
+            }
+            .sidebar-brand {
+                margin-bottom: 16px;
+            }
+            .nav-items {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 4px;
+            }
+            .nav-item {
+                padding: 8px 14px;
+                flex: 1;
+                min-width: 80px;
+                justify-content: center;
+            }
+            .nav-item .count {
+                display: none;
+            }
+            .nav-divider {
+                display: none;
+            }
+            .sidebar-footer {
+                display: none;
+            }
+            .main-content {
+                padding: 16px;
+            }
+            .details-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .header-right {
+                width: 100%;
+            }
+            .stats-badge {
+                flex-wrap: wrap;
+                width: 100%;
+                justify-content: space-between;
+            }
+            .command-buttons {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="sidebar-brand">
+            <h2>Safe Hub</h2>
+            <div class="sub">Infected Games Network</div>
+            <div class="badge">Command Center</div>
+        </div>
+
+        <div class="nav-items">
+            <div class="nav-item active" onclick="switchPage('servers')" id="nav-servers">
+                <span class="icon"></span>
+                <span>Servers</span>
+                <span class="count" id="navServerCount">0</span>
+            </div>
+            <div class="nav-item" onclick="switchPage('players')" id="nav-players">
+                <span class="icon"></span>
+                <span>Players</span>
+                <span class="count" id="navPlayerCount">0</span>
+            </div>
+            <div class="nav-item" onclick="switchPage('commands')" id="nav-commands">
+                <span class="icon"></span>
+                <span>Commands</span>
+            </div>
+        </div>
+
+        <div class="nav-divider"></div>
+
+        <div class="sidebar-footer">
+            <div>WebSocket Connection</div>
+            <div style="color:#28a745;margin-top:4px;" id="connectionStatus">● Connected</div>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="header">
+            <div class="header-left">
+                <h1 id="pageTitle">Servers</h1>
+                <p id="pageSubtitle">Monitor all infected game servers in the network</p>
+                <div class="last-update" id="lastUpdate">Last updated: —</div>
+            </div>
+            <div class="header-right">
+                <div class="stats-badge">
+                    <div class="stat">
+                        <span>Servers</span>
+                        <span class="number" id="serverCount">0</span>
+                    </div>
+                    <div class="stat">
+                        <span>Online</span>
+                        <span class="number" id="onlineCount">0</span>
+                    </div>
+                    <div class="stat">
+                        <span>Players</span>
+                        <span class="number" id="playerCount">0</span>
+                    </div>
+                </div>
+                <button class="btn btn-primary" onclick="refreshData()">⟳ Refresh</button>
+            </div>
+        </div>
+
+        <!-- Servers Page -->
+        <div class="page active" id="page-servers">
+            <div class="section-title">
+                <span>Active Servers</span>
+                <span class="count" id="serverCountLabel">0 servers</span>
+            </div>
+            <div class="grid" id="serverGrid">
+                <div class="empty-state">
+                    <div class="icon">📡</div>
+                    <h3>No Active Servers</h3>
+                    <p>Waiting for Safe Hub servers to connect</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Players Page -->
+        <div class="page" id="page-players">
+            <div class="section-title">
+                <span>Players Online</span>
+                <span class="count" id="playerCountLabel">0 players</span>
+            </div>
+            <div class="grid" id="playerGrid">
+                <div class="empty-state">
+                    <div class="icon">👤</div>
+                    <h3>No Players Online</h3>
+                    <p>Players will appear here when they join a server</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Commands Page -->
+        <div class="page" id="page-commands">
+            <div class="commands-panel">
+                <div class="panel-title">Command Center</div>
+                <div class="panel-subtitle">Execute commands on selected server and player</div>
+
+                <div class="form-group">
+                    <label for="serverSelect">Target Server</label>
+                    <select id="serverSelect">
+                        <option value="">Select a server...</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="playerSelect">Target Player</label>
+                    <select id="playerSelect">
+                        <option value="">Select a player...</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="commandInput">Command</label>
+                    <select id="commandInput">
+                        <option value="kick">Kick</option>
+                        <option value="ban">Ban</option>
+                        <option value="tempban">Temporary Ban</option>
+                        <option value="message">Send Message</option>
+                        <option value="warn">Warn</option>
+                        <option value="mute">Mute</option>
+                        <option value="unmute">Unmute</option>
+                        <option value="freeze">Freeze</option>
+                        <option value="unfreeze">Unfreeze</option>
+                        <option value="teleport">Teleport</option>
+                        <option value="respawn">Respawn</option>
+                        <option value="heal">Heal</option>
+                        <option value="kill">Kill</option>
+                        <option value="clearinventory">Clear Inventory</option>
+                        <option value="setrank">Set Rank</option>
+                        <option value="giveroles">Give Roles</option>
+                        <option value="removeroles">Remove Roles</option>
+                    </select>
+                </div>
+
+                <div class="form-group" id="extraInputGroup">
+                    <label for="extraInput">Additional Parameters</label>
+                    <input type="text" id="extraInput" placeholder="Duration, message, rank, etc.">
+                </div>
+
+                <div class="form-group">
+                    <label for="reasonInput">Reason</label>
+                    <input type="text" id="reasonInput" placeholder="Reason for action...">
+                </div>
+
+                <div class="command-buttons">
+                    <button class="btn btn-danger btn-full" onclick="executeCommand()">
+                        Execute Command
+                    </button>
+                    <button class="btn btn-warning" onclick="clearSelection()">
+                        Clear Selection
+                    </button>
+                    <button class="btn btn-success" onclick="refreshPlayers()">
+                        Refresh Players
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p><span class="safe-hub">Safe Hub</span> &bull; Infected Games Command Center &bull; Real-time updates via WebSocket</p>
+        </div>
+    </div>
+
+    <script>
+        let socket = null;
+        let serverData = { servers: [] };
+        let selectedServerId = null;
+        let selectedPlayer = null;
+        let currentPage = 'servers';
+
+        function switchPage(page) {
+            currentPage = page;
+            
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById('page-' + page).classList.add('active');
+            
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            document.getElementById('nav-' + page).classList.add('active');
+            
+            const titles = {
+                servers: ['Servers', 'Monitor all infected game servers in the network'],
+                players: ['Players', 'View all players currently online across the network'],
+                commands: ['Command Center', 'Execute administrative commands on selected servers and players']
+            };
+            
+            document.getElementById('pageTitle').textContent = titles[page][0];
+            document.getElementById('pageSubtitle').textContent = titles[page][1];
+            
+            if (page === 'players') {
+                renderPlayers(serverData.servers);
+            }
+        }
+
+        function connectWebSocket() {
+            try {
+                socket = new WebSocket('ws://localhost:8080');
+                
+                socket.onopen = function() {
+                    document.getElementById('connectionStatus').textContent = '● Connected';
+                    document.getElementById('connectionStatus').style.color = '#28a745';
+                };
+                
+                socket.onmessage = function(event) {
+                    try {
+                        const data = JSON.parse(event.data);
+                        handleServerData(data);
+                    } catch(e) {
+                        console.error('[Safe Hub] Parse error:', e);
+                    }
+                };
+                
+                socket.onclose = function() {
+                    document.getElementById('connectionStatus').textContent = '● Disconnected';
+                    document.getElementById('connectionStatus').style.color = '#dc3545';
+                    setTimeout(connectWebSocket, 3000);
+                };
+                
+                socket.onerror = function(error) {
+                    console.error('[Safe Hub] WebSocket error:', error);
+                };
+            } catch(e) {
+                console.log('[Safe Hub] WebSocket unavailable, using polling');
+                startPolling();
+            }
+        }
+
+        function startPolling() {
+            setInterval(function() {
+                fetch('/api/servers')
+                    .then(res => res.json())
+                    .then(data => handleServerData(data))
+                    .catch(err => console.log('[Safe Hub] Polling error:', err));
+            }, 5000);
+        }
+
+        function handleServerData(data) {
+            serverData = data;
+            renderServers(data.servers);
+            renderPlayers(data.servers);
+            updateServerSelect(data.servers);
+            updateStats(data.servers);
+            document.getElementById('lastUpdate').textContent = `Last updated: ${new Date().toLocaleTimeString()}`;
+        }
+
+        function renderServers(servers) {
+            const grid = document.getElementById('serverGrid');
+            grid.innerHTML = '';
+            
+            if (!servers || servers.length === 0) {
+                grid.innerHTML = `
+                    <div class="empty-state">
+                        <div class="icon">📡</div>
+                        <h3>No Active Servers</h3>
+                        <p>Waiting for Safe Hub servers to connect</p>
+                    </div>
+                `;
+                document.getElementById('serverCountLabel').textContent = '0 servers';
+                document.getElementById('navServerCount').textContent = '0';
+                return;
+            }
+
+            document.getElementById('serverCountLabel').textContent = `${servers.length} servers`;
+            document.getElementById('navServerCount').textContent = servers.length;
+
+            servers.forEach(server => {
+                const card = document.createElement('div');
+                
+                let statusClass = 'online';
+                let statusText = 'Online';
+                let statusDot = 'online';
+                
+                if (server.isShuttingDown) {
+                    statusClass = 'shutting-down';
+                    statusText = 'Shutting Down';
+                    statusDot = 'shutting-down';
+                } else if (!server.online) {
+                    statusClass = 'offline';
+                    statusText = 'Offline';
+                    statusDot = 'offline';
+                }
+                
+                card.className = `server-card ${statusClass}`;
+                card.dataset.serverId = server.serverId;
+
+                const playerList = server.playerNames && server.playerNames.length > 0 
+                    ? server.playerNames.map(name => 
+                        `<span class="player-tag" onclick="selectPlayerFromCard('${escapeHtml(name)}', '${server.serverId}')">${escapeHtml(name)}</span>`
+                      ).join('')
+                    : '<span style="color:#5a6a7a;font-size:12px;">No players online</span>';
+
+                const gamePageUrl = server.gamePageUrl || `https://www.roblox.com/games/${server.serverId || ''}`;
+
+                card.innerHTML = `
+                    <div class="card-header">
+                        <div>
+                            <div class="game-name">
+                                ${escapeHtml(server.gameName || 'Unknown Game')}
+                                <span class="infected-tag">Infected</span>
+                            </div>
+                            <div class="server-name">${escapeHtml(server.serverName || 'Unnamed Server')}</div>
+                        </div>
+                        <div>
+                            <span class="status-indicator ${statusClass}">
+                                <span class="status-dot ${statusDot}"></span>
+                                ${statusText}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="details-grid">
+                        <div class="detail-item">
+                            <span class="label">Players</span>
+                            <span class="value">${server.players || 0} <span class="sub">/ ${server.maxPlayers || 50}</span></span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="label">Region</span>
+                            <span class="value">${escapeHtml(server.region || 'Unknown')}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="label">Latency</span>
+                            <span class="value">${server.ping || 0}ms</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="label">Map</span>
+                            <span class="value">${escapeHtml(server.map || 'Unknown')}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="label">Uptime</span>
+                            <span class="value">${server.uptime || '0s'}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="label">Server ID</span>
+                            <span class="value" style="font-size:11px;color:#7a879a;font-weight:400;">${escapeHtml(String(server.serverId || '').substring(0, 12))}</span>
+                        </div>
+                    </div>
+                    <div class="player-list">
+                        <div class="title">Players Online</div>
+                        <div class="player-tags">${playerList}</div>
+                    </div>
+                    <div class="card-actions">
+                        <button class="btn btn-success" onclick="selectServer('${server.serverId}')">Select Server</button>
+                        <button class="btn btn-primary" onclick="window.open('${gamePageUrl}', '_blank')">Game Page</button>
+                    </div>
+                `;
+                
+                grid.appendChild(card);
+            });
+        }
+
+        function renderPlayers(servers) {
+            const grid = document.getElementById('playerGrid');
+            grid.innerHTML = '';
+            
+            let allPlayers = [];
+            servers.forEach(server => {
+                if (server.playerNames && server.playerNames.length > 0) {
+                    server.playerNames.forEach(name => {
+                        allPlayers.push({
+                            name: name,
+                            server: server.gameName || 'Unknown',
+                            serverId: server.serverId
+                        });
+                    });
+                }
+            });
+            
+            if (allPlayers.length === 0) {
+                grid.innerHTML = `
+                    <div class="empty-state">
+                        <div class="icon">👤</div>
+                        <h3>No Players Online</h3>
+                        <p>Players will appear here when they join a server</p>
+                    </div>
+                `;
+                document.getElementById('playerCountLabel').textContent = '0 players';
+                document.getElementById('navPlayerCount').textContent = '0';
+                return;
+            }
+            
+            document.getElementById('playerCountLabel').textContent = `${allPlayers.length} players`;
+            document.getElementById('navPlayerCount').textContent = allPlayers.length;
+            
+            allPlayers.forEach(player => {
+                const card = document.createElement('div');
+                card.className = 'server-card online';
+                card.style.cursor = 'pointer';
+                
+                card.innerHTML = `
+                    <div class="card-header">
+                        <div>
+                            <div class="game-name">
+                                ${escapeHtml(player.name)}
+                            </div>
+                            <div class="server-name">${escapeHtml(player.server)}</div>
+                        </div>
+                        <div>
+                            <span class="status-indicator online">
+                                <span class="status-dot online"></span>
+                                Online
+                            </span>
+                        </div>
+                    </div>
+                    <div class="card-actions">
+                        <button class="btn btn-success" onclick="selectPlayerFromCard('${escapeHtml(player.name)}', '${player.serverId}')">Select Player</button>
+                        <button class="btn btn-primary" onclick="selectServer('${player.serverId}')">View Server</button>
+                    </div>
+                `;
+                
+                grid.appendChild(card);
+            });
+        }
+
+        function updateStats(servers) {
+            let totalPlayers = 0;
+            let onlineServers = 0;
+
+            servers.forEach(server => {
+                if (server.online && !server.isShuttingDown) {
+                    onlineServers++;
+                    totalPlayers += server.players || 0;
+                }
+            });
+
+            document.getElementById('serverCount').textContent = servers.length;
+            document.getElementById('onlineCount').textContent = onlineServers;
+            document.getElementById('playerCount').textContent = totalPlayers;
+        }
+
+        function updateServerSelect(servers) {
+            const select = document.getElementById('serverSelect');
+            const currentValue = select.value;
+            
+            select.innerHTML = '<option value="">Select a server...</option>';
+            
+            servers.forEach(server => {
+                if (server.online && !server.isShuttingDown) {
+                    const option = document.createElement('option');
+                    option.value = server.serverId;
+                    option.textContent = `${server.gameName || 'Unknown'} - ${server.players || 0} players`;
+                    select.appendChild(option);
+                }
+            });
+            
+            if (currentValue && [...select.options].some(opt => opt.value === currentValue)) {
+                select.value = currentValue;
+            }
+        }
+
+        function updatePlayerSelect(serverId) {
+            const select = document.getElementById('playerSelect');
+            select.innerHTML = '<option value="">Select a player...</option>';
+            
+            const server = serverData.servers.find(s => s.serverId === serverId);
+            if (server && server.playerNames) {
+                server.playerNames.forEach(name => {
+                    const option = document.createElement('option');
+                    option.value = name;
+                    option.textContent = name;
+                    select.appendChild(option);
+                });
+            }
+        }
+
+        function selectServer(serverId) {
+            selectedServerId = serverId;
+            document.getElementById('serverSelect').value = serverId;
+            updatePlayerSelect(serverId);
+            switchPage('commands');
+            
+            document.querySelectorAll('.server-card').forEach(card => {
+                card.style.borderColor = card.dataset.serverId === serverId ? '#2d6bff' : '';
+                card.style.borderWidth = card.dataset.serverId === serverId ? '2px' : '';
+            });
+        }
+
+        function selectPlayerFromCard(playerName, serverId) {
+            selectedPlayer = playerName;
+            if (serverId) {
+                selectServer(serverId);
+            }
+            document.getElementById('playerSelect').value = playerName;
+            switchPage('commands');
+            
+            document.querySelectorAll('.player-tag').forEach(tag => {
+                tag.classList.toggle('selected', tag.textContent === playerName);
+            });
+        }
+
+        function clearSelection() {
+            selectedServerId = null;
+            selectedPlayer = null;
+            document.getElementById('serverSelect').value = '';
+            document.getElementById('playerSelect').innerHTML = '<option value="">Select a player...</option>';
+            document.querySelectorAll('.player-tag').forEach(tag => tag.classList.remove('selected'));
+            document.querySelectorAll('.server-card').forEach(card => {
+                card.style.borderColor = '';
+                card.style.borderWidth = '';
+            });
+        }
+
+        function refreshPlayers() {
+            if (selectedServerId) {
+                updatePlayerSelect(selectedServerId);
+            }
+        }
+
+        function executeCommand() {
+            const serverId = document.getElementById('serverSelect').value;
+            const player = document.getElementById('playerSelect').value;
+            const command = document.getElementById('commandInput').value;
+            const extra = document.getElementById('extraInput').value;
+            const reason = document.getElementById('reasonInput').value;
+
+            if (!serverId) {
+                alert('Please select a target server');
+                return;
+            }
+
+            if (!player) {
+                alert('Please select a target player');
+                return;
+            }
+
+            if (!command) {
+                alert('Please select a command');
+                return;
+            }
+
+            const commandData = {
+                action: 'command',
+                serverId: serverId,
+                player: player,
+                command: command,
+                extra: extra,
+                reason: reason,
+                timestamp: new Date().toISOString()
+            };
+
+            if (socket && socket.readyState === WebSocket.OPEN) {
+                socket.send(JSON.stringify(commandData));
+                alert(`Command "${command}" executed on ${player}`);
+            } else {
+                alert('WebSocket not connected. Command would be: ' + JSON.stringify(commandData, null, 2));
+            }
+
+            document.getElementById('reasonInput').value = '';
+            document.getElementById('extraInput').value = '';
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function refreshData() {
+            if (socket && socket.readyState === WebSocket.OPEN) {
+                socket.send(JSON.stringify({ action: 'refresh' }));
+            } else {
+                connectWebSocket();
+            }
+        }
+
+        document.getElementById('serverSelect').addEventListener('change', function() {
+            if (this.value) {
+                selectedServerId = this.value;
+                updatePlayerSelect(this.value);
+            } else {
+                clearSelection();
+            }
+        });
+
+        document.getElementById('playerSelect').addEventListener('change', function() {
+            selectedPlayer = this.value;
+        });
+
+        connectWebSocket();
+    </script>
+</body>
+</html>
