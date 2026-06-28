@@ -22,6 +22,12 @@ COOLDOWN_HOURS = 24
 # Local file for verification only
 VERIFIED_FILE = 'verified.json'
 
+intents = discord.Intents.default()
+intents.message_content = True
+intents.members = True
+intents.voice_states = False  # <-- ADD THIS LINE to disable voice features
+
+
 def load_verified():
     if not os.path.exists(VERIFIED_FILE):
         with open(VERIFIED_FILE, 'w') as f:
