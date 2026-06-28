@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Safe Hub - Infected Games Monitor</title>
-    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -772,8 +771,8 @@
         <div class="nav-divider"></div>
 
         <div class="sidebar-footer">
-            <div>WebSocket</div>
-            <div style="margin-top:2px;" id="connectionStatus">● Connected</div>
+            <div>Connection</div>
+            <div style="margin-top:2px; color: #28a745;" id="connectionStatus">● Polling (5s)</div>
         </div>
     </div>
 
@@ -901,12 +900,11 @@
         </div>
 
         <div class="footer">
-            <p><span class="safe-hub">Safe Hub</span> &bull; Infected Games Command Center &bull; Real-time updates via WebSocket</p>
+            <p><span class="safe-hub">Safe Hub</span> &bull; Infected Games Command Center &bull; Updates every 5 seconds</p>
         </div>
     </div>
 
     <script>
-        let socket = null;
         let serverData = { servers: [] };
         let selectedServerId = null;
         let selectedPlayer = null;
@@ -951,70 +949,6 @@
                     </div>
                 `;
             }
-        }
-
-        // ==================== SOCKET.IO CONNECTION ====================
-        function connectSocketIO() {
-            try {
-                socket = io(API_URL, {
-                    transports: ['websocket', 'polling'],
-                    reconnection: true,
-                    reconnectionAttempts: 5,
-                    reconnectionDelay: 1000
-                });
-                
-                socket.on('connect', function() {
-                    console.log('[Safe Hub] Socket.IO connected');
-                    document.getElementById('connectionStatus').textContent = '● Connected';
-                    document.getElementById('connectionStatus').style.color = '#28a745';
-                });
-                
-                socket.on('server_update', function(data) {
-                    console.log('[Safe Hub] Server update received:', data);
-                    handleServerData(data);
-                });
-                
-                socket.on('command_result', function(data) {
-                    console.log('[Safe Hub] Command result:', data);
-                    alert('Command executed successfully!');
-                });
-                
-                socket.on('disconnect', function() {
-                    console.log('[Safe Hub] Socket.IO disconnected');
-                    document.getElementById('connectionStatus').textContent = '● Disconnected';
-                    document.getElementById('connectionStatus').style.color = '#dc3545';
-                });
-                
-                socket.on('connect_error', function(error) {
-                    console.error('[Safe Hub] Socket.IO connection error:', error);
-                    startPolling();
-                });
-            } catch(e) {
-                console.log('[Safe Hub] Socket.IO unavailable, using polling');
-                startPolling();
-            }
-        }
-
-        function startPolling() {
-            setInterval(function() {
-                fetchServers();
-            }, 5000);
-        }
-
-        function handleServerData(data) {
-            if (data.servers) {
-                serverData = data;
-            } else if (Array.isArray(data)) {
-                serverData = { servers: data };
-            } else {
-                serverData = { servers: [] };
-            }
-            
-            renderServers(serverData.servers);
-            renderPlayers(serverData.servers);
-            updateServerSelect(serverData.servers);
-            updateStats(serverData.servers);
-            document.getElementById('lastUpdate').textContent = `Last updated: ${new Date().toLocaleTimeString()}`;
         }
 
         // ==================== RENDER FUNCTIONS ====================
@@ -1320,11 +1254,32 @@
                 timestamp: new Date().toISOString()
             };
 
-            if (socket && socket.connected) {
-                socket.emit('command', commandData);
-                alert(`Command "${command}" sent to ${player}`);
-            } else {
-                alert('Socket.IO not connected. Using fallback. Command would be: ' + JSON.stringify(commandData, null, 2));
+            // Send command via HTTP POST
+            sendCommand(commandData);
+        }
+
+        async function sendCommand(commandData) {
+            try {
+                console.log('[Safe Hub] Sending command:', commandData);
+                
+                const response = await fetch(`${API_URL}/api/command`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(commandData)
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                console.log('[Safe Hub] Command response:', data);
+                alert(`Command "${commandData.command}" sent to ${commandData.player} successfully!`);
+            } catch (error) {
+                console.error('[Safe Hub] Command failed:', error);
+                alert(`Command failed: ${error.message}`);
             }
 
             document.getElementById('reasonInput').value = '';
@@ -1380,11 +1335,11 @@
 
         // ==================== INITIALIZATION ====================
         fetchServers();
-        connectSocketIO();
-        setInterval(fetchServers, 10000);
+        setInterval(fetchServers, 5000); // Refresh every 5 seconds
 
         console.log('[Safe Hub] Dashboard initialized');
         console.log('[Safe Hub] Backend URL:', API_URL);
+        console.log('[Safe Hub] Using polling mode (5 second interval)');
     </script>
 </body>
 </html>
