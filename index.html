@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Safe Hub - Infected Games Monitor</title>
+    <title>Safe Hub - Infected Games Command Center</title>
     <style>
         * {
             margin: 0;
@@ -19,10 +19,10 @@
         }
 
         .sidebar {
-            width: 180px;
+            width: 200px;
             background: #0f131a;
             border-right: 1px solid #1a222e;
-            padding: 16px 12px;
+            padding: 20px 14px;
             height: 100vh;
             position: sticky;
             top: 0;
@@ -32,13 +32,18 @@
 
         .sidebar-brand {
             padding: 4px 8px;
-            margin-bottom: 20px;
+            margin-bottom: 24px;
         }
 
         .sidebar-brand h2 {
             color: #e8edf5;
-            font-size: 16px;
-            font-weight: 600;
+            font-size: 18px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .sidebar-brand h2 span {
+            color: #ff465a;
         }
 
         .sidebar-brand .sub {
@@ -53,23 +58,23 @@
             color: #ff465a;
             font-size: 9px;
             font-weight: 600;
-            padding: 1px 10px;
+            padding: 2px 12px;
             border-radius: 10px;
             border: 1px solid rgba(255, 70, 90, 0.15);
-            margin-top: 4px;
+            margin-top: 6px;
         }
 
         .nav-item {
             display: flex;
             align-items: center;
-            gap: 8px;
-            padding: 6px 10px;
-            border-radius: 6px;
+            gap: 10px;
+            padding: 8px 12px;
+            border-radius: 8px;
             color: #7a879a;
             cursor: pointer;
             transition: all 0.2s;
             margin-bottom: 2px;
-            font-size: 12px;
+            font-size: 13px;
             font-weight: 500;
         }
 
@@ -81,20 +86,20 @@
         .nav-item.active {
             background: #1a222e;
             color: #e8edf5;
-            border-left: 2px solid #2d6bff;
+            border-left: 3px solid #2d6bff;
         }
 
         .nav-item .icon {
-            width: 16px;
+            width: 18px;
             text-align: center;
-            font-size: 14px;
+            font-size: 16px;
         }
 
         .nav-item .count {
             margin-left: auto;
             background: #1a222e;
-            padding: 0px 6px;
-            border-radius: 10px;
+            padding: 0px 8px;
+            border-radius: 12px;
             font-size: 10px;
             color: #5a6a7a;
         }
@@ -107,21 +112,31 @@
         .nav-divider {
             height: 1px;
             background: #1a222e;
-            margin: 8px 8px;
+            margin: 10px 8px;
         }
 
         .sidebar-footer {
-            margin-top: 16px;
-            padding: 8px;
+            margin-top: 20px;
+            padding: 10px;
             border-top: 1px solid #1a222e;
             color: #3a4555;
             font-size: 10px;
             text-align: center;
         }
 
+        .sidebar-footer .status-online {
+            color: #28a745;
+        }
+
+        .sidebar-footer .key-expiry {
+            color: #ffc107;
+            font-size: 9px;
+            margin-top: 4px;
+        }
+
         .main-content {
             flex: 1;
-            padding: 16px 20px;
+            padding: 20px 28px;
             overflow-y: auto;
             min-width: 0;
             max-height: 100vh;
@@ -150,36 +165,36 @@
             align-items: center;
             flex-wrap: wrap;
             gap: 10px;
-            margin-bottom: 16px;
+            margin-bottom: 20px;
         }
 
         .header-left h1 {
             color: #e8edf5;
-            font-size: 18px;
-            font-weight: 600;
+            font-size: 22px;
+            font-weight: 700;
         }
 
         .header-left p {
             color: #7a879a;
-            font-size: 12px;
+            font-size: 13px;
             margin-top: 2px;
         }
 
         .header-right {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
             flex-wrap: wrap;
         }
 
         .stats-badge {
             background: #141a22;
-            padding: 4px 12px;
-            border-radius: 6px;
+            padding: 6px 16px;
+            border-radius: 8px;
             border: 1px solid #212a34;
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 16px;
         }
 
         .stats-badge .stat {
@@ -187,7 +202,7 @@
             align-items: center;
             gap: 4px;
             color: #a0b0c8;
-            font-size: 11px;
+            font-size: 12px;
         }
 
         .stats-badge .stat .number {
@@ -199,10 +214,10 @@
             background: #2a3340;
             color: #e8edf5;
             border: 1px solid #3a4555;
-            padding: 4px 14px;
+            padding: 6px 16px;
             border-radius: 6px;
             cursor: pointer;
-            font-size: 11px;
+            font-size: 12px;
             font-weight: 500;
             transition: all 0.2s;
         }
@@ -210,6 +225,7 @@
         .btn:hover {
             background: #354052;
             border-color: #4a5a6a;
+            transform: translateY(-1px);
         }
 
         .btn-primary {
@@ -253,9 +269,19 @@
             border-color: #ffcd2e;
         }
 
+        .btn-purple {
+            background: #6f42c1;
+            border-color: #6f42c1;
+        }
+
+        .btn-purple:hover {
+            background: #7b4fd4;
+            border-color: #7b4fd4;
+        }
+
         .last-update {
             color: #5a6a7a;
-            font-size: 10px;
+            font-size: 11px;
             margin-top: 2px;
         }
 
@@ -269,16 +295,24 @@
 
         .main-grid {
             display: grid;
-            grid-template-columns: 1fr 320px;
-            gap: 16px;
+            grid-template-columns: 1fr 340px;
+            gap: 20px;
             align-items: start;
+        }
+
+        .servers-section {
+            min-width: 0;
+        }
+
+        .commands-section {
+            min-width: 0;
         }
 
         .section-title {
             color: #e8edf5;
-            font-size: 13px;
+            font-size: 14px;
             font-weight: 600;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -286,26 +320,29 @@
 
         .section-title .count {
             color: #7a879a;
-            font-size: 11px;
+            font-size: 12px;
             font-weight: 400;
         }
 
         .grid {
             display: grid;
             grid-template-columns: 1fr;
-            gap: 10px;
+            gap: 12px;
         }
 
         .server-card {
             background: #141a22;
-            border-radius: 8px;
-            padding: 12px 14px;
+            border-radius: 10px;
+            padding: 14px 16px;
             border: 1px solid #212a34;
             transition: all 0.25s ease;
+            position: relative;
         }
 
         .server-card:hover {
             border-color: #3a4a5a;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.3);
         }
 
         .server-card.online {
@@ -331,37 +368,37 @@
 
         .game-name {
             color: #e8edf5;
-            font-size: 14px;
+            font-size: 16px;
             font-weight: 600;
         }
 
         .game-name .infected-tag {
             color: #ff465a;
-            font-size: 9px;
+            font-size: 10px;
             font-weight: 500;
             margin-left: 6px;
             background: rgba(255, 70, 90, 0.1);
-            padding: 1px 8px;
-            border-radius: 10px;
+            padding: 1px 10px;
+            border-radius: 12px;
             border: 1px solid rgba(255, 70, 90, 0.15);
         }
 
         .server-name {
             color: #7a879a;
-            font-size: 11px;
+            font-size: 12px;
             font-weight: 400;
-            margin-bottom: 6px;
+            margin-bottom: 8px;
         }
 
         .status-indicator {
             display: inline-flex;
             align-items: center;
             gap: 4px;
-            font-size: 9px;
+            font-size: 10px;
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.3px;
-            padding: 2px 8px;
+            padding: 2px 10px;
             border-radius: 12px;
         }
 
@@ -384,8 +421,8 @@
         }
 
         .status-dot {
-            width: 5px;
-            height: 5px;
+            width: 6px;
+            height: 6px;
             border-radius: 50%;
             display: inline-block;
         }
@@ -412,9 +449,9 @@
         .details-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 6px;
-            margin: 6px 0 0 0;
-            padding: 6px 0 0 0;
+            gap: 8px;
+            margin: 8px 0 0 0;
+            padding: 8px 0 0 0;
             border-top: 1px solid #1e2632;
         }
 
@@ -426,7 +463,7 @@
 
         .detail-item .label {
             color: #5a6a7a;
-            font-size: 8px;
+            font-size: 9px;
             text-transform: uppercase;
             letter-spacing: 0.3px;
             font-weight: 600;
@@ -434,29 +471,29 @@
 
         .detail-item .value {
             color: #e8edf5;
-            font-size: 11px;
+            font-size: 13px;
             font-weight: 500;
         }
 
         .detail-item .value .sub {
             color: #7a879a;
             font-weight: 400;
-            font-size: 10px;
+            font-size: 11px;
         }
 
         .player-list {
-            margin-top: 6px;
-            padding-top: 6px;
+            margin-top: 8px;
+            padding-top: 8px;
             border-top: 1px solid #1e2632;
         }
 
         .player-list .title {
             color: #5a6a7a;
-            font-size: 9px;
+            font-size: 10px;
             text-transform: uppercase;
             letter-spacing: 0.3px;
             font-weight: 600;
-            margin-bottom: 4px;
+            margin-bottom: 6px;
         }
 
         .player-tags {
@@ -468,9 +505,9 @@
         .player-tag {
             background: #1a222e;
             color: #b0c0d8;
-            padding: 1px 8px;
-            border-radius: 12px;
-            font-size: 10px;
+            padding: 2px 10px;
+            border-radius: 14px;
+            font-size: 11px;
             border: 1px solid #26303e;
             cursor: pointer;
             transition: all 0.2s;
@@ -489,47 +526,51 @@
 
         .card-actions {
             display: flex;
-            gap: 4px;
-            margin-top: 6px;
-            padding-top: 6px;
+            gap: 6px;
+            margin-top: 10px;
+            padding-top: 10px;
             border-top: 1px solid #1e2632;
+            flex-wrap: wrap;
         }
 
         .card-actions .btn {
             flex: 1;
             text-align: center;
-            padding: 3px 8px;
-            font-size: 9px;
+            padding: 4px 10px;
+            font-size: 10px;
+            min-width: 60px;
         }
 
         .commands-panel {
             background: #141a22;
-            border-radius: 8px;
-            padding: 14px 16px;
+            border-radius: 10px;
+            padding: 18px 20px;
             border: 1px solid #212a34;
+            position: sticky;
+            top: 20px;
         }
 
         .commands-panel .panel-title {
             color: #e8edf5;
-            font-size: 14px;
+            font-size: 16px;
             font-weight: 600;
             margin-bottom: 2px;
         }
 
         .commands-panel .panel-subtitle {
             color: #7a879a;
-            font-size: 11px;
-            margin-bottom: 12px;
+            font-size: 12px;
+            margin-bottom: 14px;
         }
 
         .form-group {
-            margin-bottom: 8px;
+            margin-bottom: 10px;
         }
 
         .form-group label {
             display: block;
             color: #a0b0c8;
-            font-size: 9px;
+            font-size: 10px;
             font-weight: 500;
             margin-bottom: 3px;
             text-transform: uppercase;
@@ -540,12 +581,12 @@
         .form-group input,
         .form-group textarea {
             width: 100%;
-            padding: 5px 8px;
+            padding: 6px 10px;
             background: #1a222e;
             border: 1px solid #2a3340;
-            border-radius: 4px;
+            border-radius: 6px;
             color: #e8edf5;
-            font-size: 11px;
+            font-size: 12px;
             transition: all 0.2s;
         }
 
@@ -570,13 +611,13 @@
         .command-buttons {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 4px;
-            margin-top: 8px;
+            gap: 6px;
+            margin-top: 12px;
         }
 
         .command-buttons .btn {
-            padding: 4px 8px;
-            font-size: 10px;
+            padding: 6px 10px;
+            font-size: 11px;
             text-transform: uppercase;
             letter-spacing: 0.2px;
         }
@@ -587,34 +628,34 @@
 
         .empty-state {
             text-align: center;
-            padding: 20px;
+            padding: 30px 20px;
             color: #5a6a7a;
         }
 
         .empty-state .icon {
-            font-size: 24px;
-            margin-bottom: 8px;
+            font-size: 32px;
+            margin-bottom: 10px;
             opacity: 0.3;
         }
 
         .empty-state h3 {
             color: #8a9aaa;
             font-weight: 500;
-            font-size: 13px;
+            font-size: 14px;
         }
 
         .empty-state p {
-            font-size: 11px;
+            font-size: 12px;
             margin-top: 2px;
         }
 
         .footer {
-            margin-top: 16px;
+            margin-top: 20px;
             text-align: center;
             color: #3a4555;
-            font-size: 10px;
+            font-size: 11px;
             border-top: 1px solid #1a222e;
-            padding-top: 12px;
+            padding-top: 14px;
         }
 
         .footer .safe-hub {
@@ -622,16 +663,65 @@
             font-weight: 600;
         }
 
+        /* Key Expiry Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: #141a22;
+            padding: 40px;
+            border-radius: 12px;
+            border: 1px solid #2a3340;
+            max-width: 450px;
+            width: 90%;
+            text-align: center;
+        }
+
+        .modal h2 {
+            color: #ff465a;
+            font-size: 22px;
+            margin-bottom: 12px;
+        }
+
+        .modal p {
+            color: #a0b0c8;
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .modal .btn {
+            padding: 10px 30px;
+            font-size: 14px;
+        }
+
         @media (max-width: 1024px) {
             .main-grid {
                 grid-template-columns: 1fr;
             }
             .sidebar {
-                width: 150px;
-                padding: 12px 8px;
+                width: 160px;
+                padding: 14px 10px;
             }
             .main-content {
-                padding: 12px;
+                padding: 14px;
+            }
+            .commands-panel {
+                position: static;
             }
         }
 
@@ -645,22 +735,22 @@
                 position: static;
                 border-right: none;
                 border-bottom: 1px solid #1a222e;
-                padding: 8px 12px;
+                padding: 10px 14px;
             }
             .sidebar-brand {
-                margin-bottom: 8px;
+                margin-bottom: 10px;
             }
             .nav-items {
                 display: flex;
                 flex-wrap: wrap;
-                gap: 2px;
+                gap: 4px;
             }
             .nav-item {
-                padding: 4px 10px;
+                padding: 6px 12px;
                 flex: 1;
-                min-width: 60px;
+                min-width: 70px;
                 justify-content: center;
-                font-size: 10px;
+                font-size: 11px;
             }
             .nav-item .count {
                 display: none;
@@ -672,7 +762,7 @@
                 display: none;
             }
             .main-content {
-                padding: 10px;
+                padding: 12px;
                 max-height: none;
             }
             .header {
@@ -696,57 +786,73 @@
             .main-grid {
                 grid-template-columns: 1fr;
             }
+            .card-actions {
+                flex-wrap: wrap;
+            }
+            .card-actions .btn {
+                flex: 1 1 40%;
+                min-width: 60px;
+            }
         }
 
         @media (max-width: 480px) {
             .sidebar-brand h2 {
-                font-size: 14px;
+                font-size: 16px;
             }
             .main-content {
-                padding: 8px;
+                padding: 10px;
             }
             .header-left h1 {
-                font-size: 16px;
+                font-size: 18px;
             }
             .stats-badge {
                 gap: 8px;
-                padding: 4px 8px;
+                padding: 4px 10px;
             }
             .stats-badge .stat {
                 font-size: 10px;
             }
             .server-card {
-                padding: 8px 10px;
+                padding: 10px 12px;
             }
             .game-name {
-                font-size: 12px;
+                font-size: 14px;
             }
             .details-grid {
                 grid-template-columns: 1fr 1fr;
                 gap: 4px;
             }
             .detail-item .value {
-                font-size: 10px;
+                font-size: 11px;
             }
             .commands-panel {
-                padding: 10px 12px;
+                padding: 12px 14px;
             }
             .form-group select,
             .form-group input {
-                padding: 4px 6px;
-                font-size: 10px;
+                padding: 5px 8px;
+                font-size: 11px;
             }
             .command-buttons .btn {
-                font-size: 9px;
-                padding: 3px 6px;
+                font-size: 10px;
+                padding: 5px 8px;
             }
         }
     </style>
 </head>
 <body>
+    <!-- Key Expiry Modal -->
+    <div class="modal-overlay" id="keyExpiryModal">
+        <div class="modal">
+            <h2>⏰ Key Expired</h2>
+            <p>Your access key has expired. Please generate a new key using the Discord bot and log in again.</p>
+            <button class="btn btn-primary" onclick="logout()">Logout & Get New Key</button>
+        </div>
+    </div>
+
     <div class="sidebar">
         <div class="sidebar-brand">
-            <h2>Safe Hub</h2>
+            <h2>Safe<span>Hub</span></h2>
             <div class="sub">Infected Games Network</div>
             <div class="badge-side">Command Center</div>
         </div>
@@ -773,6 +879,7 @@
         <div class="sidebar-footer">
             <div>Connection</div>
             <div style="margin-top:2px; color: #28a745;" id="connectionStatus">● Polling (5s)</div>
+            <div class="key-expiry" id="keyExpiryDisplay">Key expires in: --</div>
         </div>
     </div>
 
@@ -799,6 +906,7 @@
                     </div>
                 </div>
                 <button class="btn btn-primary" onclick="refreshData()">⟳ Refresh</button>
+                <button class="btn btn-danger" onclick="logout()">🚪 Logout</button>
             </div>
         </div>
 
@@ -835,7 +943,7 @@
         <!-- Commands Page -->
         <div class="page" id="page-commands">
             <div class="commands-panel">
-                <div class="panel-title">Command Center</div>
+                <div class="panel-title">⚡ Command Center</div>
                 <div class="panel-subtitle">Execute commands on selected server and player</div>
 
                 <div class="form-group">
@@ -849,6 +957,7 @@
                     <label for="playerSelect">Target Player</label>
                     <select id="playerSelect">
                         <option value="">Select a player...</option>
+                        <option value="ALL">👥 ALL PLAYERS</option>
                     </select>
                 </div>
 
@@ -877,7 +986,7 @@
 
                 <div class="form-group" id="extraInputGroup">
                     <label for="extraInput">Additional Parameters</label>
-                    <input type="text" id="extraInput" placeholder="Duration, message, rank, etc.">
+                    <input type="text" id="extraInput" placeholder="Duration, message, rank, coordinates...">
                 </div>
 
                 <div class="form-group">
@@ -887,7 +996,7 @@
 
                 <div class="command-buttons">
                     <button class="btn btn-danger btn-full" onclick="executeCommand()">
-                        Execute Command
+                        ⚡ Execute Command
                     </button>
                     <button class="btn btn-warning" onclick="clearSelection()">
                         Clear Selection
@@ -909,8 +1018,50 @@
         let selectedServerId = null;
         let selectedPlayer = null;
         let currentPage = 'servers';
+        let keyExpiryTime = null;
 
         const API_URL = 'https://safehub-backend-production.up.railway.app';
+        const KEY_EXPIRY_HOURS = 24;
+
+        // ==================== KEY MANAGEMENT ====================
+        function getKeyExpiry() {
+            const stored = localStorage.getItem('safehub_key_expiry');
+            if (stored) {
+                return new Date(stored);
+            }
+            // If no expiry stored, set it to 24 hours from now
+            const expiry = new Date();
+            expiry.setHours(expiry.getHours() + KEY_EXPIRY_HOURS);
+            localStorage.setItem('safehub_key_expiry', expiry.toISOString());
+            return expiry;
+        }
+
+        function checkKeyExpiry() {
+            const expiry = getKeyExpiry();
+            const now = new Date();
+            
+            if (now > expiry) {
+                document.getElementById('keyExpiryModal').classList.add('active');
+                return false;
+            }
+            
+            // Update display
+            const diff = expiry - now;
+            const hours = Math.floor(diff / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            document.getElementById('keyExpiryDisplay').textContent = `Key expires in: ${hours}h ${minutes}m`;
+            
+            // Check every minute
+            setTimeout(checkKeyExpiry, 60000);
+            return true;
+        }
+
+        function logout() {
+            localStorage.removeItem('safehub_key');
+            localStorage.removeItem('safehub_validated');
+            localStorage.removeItem('safehub_key_expiry');
+            window.location.reload();
+        }
 
         // ==================== FETCH SERVERS ====================
         async function fetchServers() {
@@ -996,7 +1147,7 @@
                     ? server.playerNames.map(name => 
                         `<span class="player-tag" onclick="selectPlayerFromCard('${escapeHtml(name)}', '${server.serverId}')">${escapeHtml(name)}</span>`
                       ).join('')
-                    : '<span style="color:#5a6a7a;font-size:10px;">No players online</span>';
+                    : '<span style="color:#5a6a7a;font-size:11px;">No players online</span>';
 
                 const gamePageUrl = server.gamePageUrl || `https://www.roblox.com/games/${server.serverId || ''}`;
 
@@ -1026,7 +1177,7 @@
                             <span class="value">${escapeHtml(server.region || 'Unknown')}</span>
                         </div>
                         <div class="detail-item">
-                            <span class="label">Latency</span>
+                            <span class="label">Ping</span>
                             <span class="value">${server.ping || 0}ms</span>
                         </div>
                         <div class="detail-item">
@@ -1039,7 +1190,7 @@
                         </div>
                         <div class="detail-item">
                             <span class="label">Server ID</span>
-                            <span class="value" style="font-size:9px;color:#7a879a;font-weight:400;">${escapeHtml(String(server.serverId || '').substring(0, 12))}</span>
+                            <span class="value" style="font-size:10px;color:#7a879a;font-weight:400;">${escapeHtml(String(server.serverId || '').substring(0, 12))}</span>
                         </div>
                     </div>
                     <div class="player-list">
@@ -1049,6 +1200,8 @@
                     <div class="card-actions">
                         <button class="btn btn-success" onclick="selectServer('${server.serverId}')">Select Server</button>
                         <button class="btn btn-primary" onclick="window.open('${gamePageUrl}', '_blank')">Game Page</button>
+                        <button class="btn btn-warning" onclick="joinServer('${server.serverId}')">Join Server</button>
+                        <button class="btn btn-danger" onclick="shutdownServer('${server.serverId}')">Shutdown</button>
                     </div>
                 `;
                 
@@ -1163,6 +1316,7 @@
         function updatePlayerSelect(serverId) {
             const select = document.getElementById('playerSelect');
             select.innerHTML = '<option value="">Select a player...</option>';
+            select.innerHTML += '<option value="ALL">👥 ALL PLAYERS</option>';
             
             const server = serverData.servers.find(s => String(s.serverId) === String(serverId));
             console.log('[Safe Hub] Updating player select for server:', serverId, 'Found server:', server);
@@ -1209,7 +1363,7 @@
             selectedServerId = null;
             selectedPlayer = null;
             document.getElementById('serverSelect').value = '';
-            document.getElementById('playerSelect').innerHTML = '<option value="">Select a player...</option>';
+            document.getElementById('playerSelect').innerHTML = '<option value="">Select a player...</option><option value="ALL">👥 ALL PLAYERS</option>';
             document.querySelectorAll('.player-tag').forEach(tag => tag.classList.remove('selected'));
             document.querySelectorAll('.server-card').forEach(card => {
                 card.style.borderColor = '';
@@ -1220,6 +1374,24 @@
         function refreshPlayers() {
             if (selectedServerId) {
                 updatePlayerSelect(selectedServerId);
+            }
+        }
+
+        function joinServer(serverId) {
+            window.open(`https://www.roblox.com/games/${serverId}`, '_blank');
+        }
+
+        function shutdownServer(serverId) {
+            if (confirm('⚠️ Are you sure you want to shutdown this server?')) {
+                const commandData = {
+                    serverId: serverId,
+                    player: 'SYSTEM',
+                    command: 'shutdown',
+                    extra: '',
+                    reason: 'Server shutdown via dashboard',
+                    timestamp: new Date().toISOString()
+                };
+                sendCommand(commandData);
             }
         }
 
@@ -1236,7 +1408,7 @@
             }
 
             if (!player) {
-                alert('Please select a target player');
+                alert('Please select a target player or "ALL"');
                 return;
             }
 
@@ -1245,16 +1417,33 @@
                 return;
             }
 
+            // Special handling for message command
+            if (command === 'message' && !extra) {
+                alert('Please enter a message in Additional Parameters');
+                return;
+            }
+
+            // Special handling for teleport command
+            if (command === 'teleport' && !extra) {
+                alert('Please enter coordinates (x,y,z) in Additional Parameters');
+                return;
+            }
+
+            // Special handling for tempban
+            if (command === 'tempban' && !extra) {
+                alert('Please enter duration in minutes in Additional Parameters');
+                return;
+            }
+
             const commandData = {
                 serverId: serverId,
                 player: player,
                 command: command,
                 extra: extra,
-                reason: reason,
+                reason: reason || 'No reason provided',
                 timestamp: new Date().toISOString()
             };
 
-            // Send command via HTTP POST
             sendCommand(commandData);
         }
 
@@ -1276,14 +1465,18 @@
                 
                 const data = await response.json();
                 console.log('[Safe Hub] Command response:', data);
-                alert(`Command "${commandData.command}" sent to ${commandData.player} successfully!`);
+                
+                const target = commandData.player === 'ALL' ? 'ALL PLAYERS' : commandData.player;
+                alert(`✅ Command "${commandData.command}" sent to ${target} successfully!`);
             } catch (error) {
                 console.error('[Safe Hub] Command failed:', error);
-                alert(`Command failed: ${error.message}`);
+                alert(`❌ Command failed: ${error.message}`);
             }
 
             document.getElementById('reasonInput').value = '';
-            document.getElementById('extraInput').value = '';
+            if (commandData.command !== 'message' && commandData.command !== 'teleport' && commandData.command !== 'tempban') {
+                document.getElementById('extraInput').value = '';
+            }
         }
 
         function escapeHtml(text) {
@@ -1334,12 +1527,19 @@
         });
 
         // ==================== INITIALIZATION ====================
+        // Check key expiry
+        const keyValid = checkKeyExpiry();
+        if (!keyValid) {
+            document.getElementById('keyExpiryModal').classList.add('active');
+        }
+
         fetchServers();
-        setInterval(fetchServers, 5000); // Refresh every 5 seconds
+        setInterval(fetchServers, 5000);
 
         console.log('[Safe Hub] Dashboard initialized');
         console.log('[Safe Hub] Backend URL:', API_URL);
         console.log('[Safe Hub] Using polling mode (5 second interval)');
+        console.log('[Safe Hub] Key expires in:', KEY_EXPIRY_HOURS, 'hours');
     </script>
 </body>
 </html>
